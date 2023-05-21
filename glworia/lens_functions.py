@@ -46,6 +46,12 @@ def make_T_funcs(Psi):
     def T_1D(x, y, lens_params):
         return jnp.linalg.norm(x - y)**2/2 - Psi_1D(x, lens_params)
     
+    @partial(jnp.vectorize, excluded = {3}, signature = '(),(),()->()')
+    @partial(jit, static_argnums = (3))
+    def T_1D_vec(x, y, lens_params, Psi_1D):
+        lens_params = jnp.atleast_1d(lens_params)
+        return jnp.linalg.norm(x - y)**2/2 - Psi_1D(x, lens_params)
+    
     dT = jit(jnp.vectorize(grad(T), signature='(2)->(2)', excluded = (1,2)))
     dT_norm = jit(jnp.vectorize(lambda x, y, lens_params: jnp.linalg.norm(dT(x, y, lens_params)), signature = '(2)->()', excluded = (1,2)))
     f = jit(jnp.vectorize(lambda x, y, lens_params: rot_90@dT(x, y, lens_params)/dT_norm(x, y, lens_params), signature = '(2)->(2)', excluded = (1,2)))
@@ -60,7 +66,14 @@ def make_T_funcs(Psi):
     ddPsi_1D = jit(jnp.vectorize(grad(dPsi_1D), signature='()->()', excluded=(1,)))
     dPsi_1D_param_free = jit(jnp.vectorize(grad(Psi_1D), signature='(),(n)->()'))
     ddPsi_1D_param_free = jit(jnp.vectorize(grad(dPsi_1D), signature='(),(n)->()'))
-    mu = jit(jnp.vectorize(lambda x, lens_params: 1/((1-dPsi_1D(x, lens_params)/x)*(1-ddPsi_1D(x, lens_params))), signature='()->()', excluded=(1,)))
+    mu_raw = lambda x, lens_params: 1/((1-dPsi_1D(x, lens_params)/x)*(1-ddPsi_1D(x, lens_params)))
+    mu = jit(jnp.vectorize(mu_raw, signature='()->()', excluded=(1,)))
+    
+    @partial(jnp.vectorize, signature = '(),()->()')
+    @jit
+    def mu_vec(x, lens_params):
+        lens_params = jnp.atleast_1d(lens_params)
+        return mu_raw(x, lens_params)
 
     T_funcs = {'T': T, 
                'dT': dT, 
@@ -68,12 +81,16 @@ def make_T_funcs(Psi):
                 'f': f,
                 'T_hess_det': T_hess_det,
                 'T_1D': T_1D,
+                'T_1D_vec': T_1D_vec,
                 'dT_1D': dT_1D,
                 'ddT_1D': ddT_1D,
+                'Psi_1D': Psi_1D,
+                'Psi_2D': Psi_2D,
                 'dPsi_1D': dPsi_1D,
                 'ddPsi_1D': ddPsi_1D,
                 'dPsi_1D_param_free': dPsi_1D_param_free,
                 'ddPsi_1D_param_free': ddPsi_1D_param_free,
-                'mu': mu}
+                'mu': mu,
+                'mu_vec': mu_vec}
 
     return T_funcs

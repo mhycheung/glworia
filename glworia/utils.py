@@ -42,5 +42,12 @@ def raise_jax_error(*args, **kwargs):
 def nan_to_const(x, const = 0):
     return jnp.where(jnp.isnan(x), const, x)
 
+def const_to_nan(x, const = 0):
+    return jnp.where(x == const, jnp.nan, x)
+
 def pad_to_len_3(x, const):
     return jnp.pad(x, (3 - len(x), 0), 'constant', constant_values = const)
+
+def make_points_arr_mesh(x, y):
+    X, Y = jnp.meshgrid(x, y)
+    return jnp.vstack([X.ravel(), Y.ravel()]).T

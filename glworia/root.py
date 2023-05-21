@@ -2,27 +2,36 @@ import jax
 import jax.numpy as jnp
 from jax import vmap, grad, jit
 from functools import partial
+from glworia.utils import *
 
 def newton_1D_cond_fun_full(x_iter, tol):
     r = x_iter[1]
     return jnp.abs(r) > tol
 
-def newton_1D_step_fun_full(x_iter, f, df):
+def return_nan(x):
+    return jnp.nan
+
+def return_self(x):
+    return x
+
+def newton_1D_step_fun_full(x_iter, f, df, max_iter):
     x = x_iter[0]
     args = x_iter[2]
+    iter = x_iter[3]
     r = f(x, *args)/df(x, *args)
-    return [x - r, r, args]
+    r = jax.lax.cond(iter + 1 > max_iter, return_nan, return_self, r)
+    return [x - r, r, args, iter + 1]
 
 def make_newton_1D_cond_fun(tol):
     return lambda x_iter: newton_1D_cond_fun_full(x_iter, tol)
 
-def make_newton_1D_step_fun(f, df):
-    return lambda x_iter: newton_1D_step_fun_full(x_iter, f, df)
+def make_newton_1D_step_fun(f, df, max_iter):
+    return lambda x_iter: newton_1D_step_fun_full(x_iter, f, df, max_iter)
 
 @partial(jnp.vectorize, excluded={1, 2, 3})
 @partial(jit, static_argnums = (1, 2))
 def newton_1D(x_init, cond_fun, step_fun, args):
-    init_val = [x_init, jnp.inf, args]
+    init_val = [x_init, jnp.inf, args, 0]
     x_iter = jax.lax.while_loop(cond_fun, step_fun, init_val)
     return x_iter[0]
 
@@ -94,17 +103,52 @@ def make_bisection_1D_var_arg_v():
     return jnp.vectorize(bisection_1D, excluded={0, 1, 2, 3, 4, 5}, signature = '(1,1)->()')
 
 def get_crit_points_1D(x_init_arr, cond_fun, step_fun, y, lens_params, round_decimal = 8):
-    args = (y, lens_params)
-    crit_points_full = newton_1D(x_init_arr, cond_fun, step_fun, args)
-    crit_points_screened = jnp.unique(jnp.round(crit_points_full, round_decimal))
-    return crit_points_screened[~jnp.isnan(crit_points_screened)]
+    args = (y, jnp.atleast_1d(lens_params))
+    crit_points_full = -(newton_1D(x_init_arr, cond_fun, step_fun, args))
+    crit_points_screened = -jnp.unique(jnp.round(crit_points_full, round_decimal), size = 3, fill_value = 0.)
+    crit_points_screened = nan_to_const(crit_points_screened, 0.)
+    crit_points_screened = jnp.sort(crit_points_screened)
+    return const_to_nan(crit_points_screened, 0.)
 
-def get_crit_curve_1D(dPsi_1D_param_free, ddPsi_1D, param_arr, bisection_1D_var_arg_v, cond_fun, step_fun, x_low = 1e-8, x_hi = 10.):
+@partial(jnp.vectorize, excluded={0,1,2,5}, signature = '(),()->(3)')
+# @partial(jit, static_argnums = (1, 2, 5))
+def get_crit_points_vec(x_init_arr, cond_fun, step_fun, y, lens_params, round_decimal = 8):
+    args = (y, jnp.atleast_1d(lens_params))
+    crit_points_full = -(newton_1D(x_init_arr, cond_fun, step_fun, args))
+    crit_points_screened = -jnp.unique(jnp.round(crit_points_full, round_decimal), size = 3, fill_value = 0.)
+    crit_points_screened = nan_to_const(crit_points_screened, 0.)
+    crit_points_screened = jnp.sort(crit_points_screened)
+    return const_to_nan(crit_points_screened, 0.)
+
+def make_crit_curve_helper_func(T_funcs, crit_bisect_tol = 1e-9):
+    ddPsi_1D = T_funcs['ddPsi_1D']
+
+    bisection_1D_var_arg_v = make_bisection_1D_var_arg_v()
+    bisect_cond_fun_crit = make_bisection_1D_cond_fun(crit_bisect_tol)
+    bisect_step_fun_ddPsi_1D = make_bisection_1D_step_fun(ddPsi_1D)
+
+    crit_curve_helper_funcs = {'bisection_1D_var_arg_v': bisection_1D_var_arg_v,
+                               'bisect_cond_fun_crit': bisect_cond_fun_crit,
+                               'bisect_step_fun_ddPsi_1D': bisect_step_fun_ddPsi_1D}
+    
+    return crit_curve_helper_funcs
+
+def get_crit_curve_1D_raw(dPsi_1D_param_free, ddPsi_1D, param_arr, bisection_1D_var_arg_v, cond_fun, step_fun, x_low = 1e-8, x_hi = 10.):
     param_arr_2D = jnp.atleast_2d(param_arr).T
     param_arr_3D = jnp.atleast_3d(param_arr_2D)
     x_crit = bisection_1D_var_arg_v(ddPsi_1D, 1, x_low, x_hi, cond_fun, step_fun, param_arr_3D)
     y_crit = dPsi_1D_param_free(x_crit, param_arr_2D) - x_crit
-    return y_crit
+    return x_crit, y_crit
+
+def get_crit_curve_1D(param_arr, T_funcs, crit_helper_funcs, x_low = 1e-8, x_hi = 10.):
+    dPsi_1D_param_free = T_funcs['dPsi_1D_param_free']
+    ddPsi_1D = T_funcs['ddPsi_1D']
+    bisection_1D_var_arg_v = crit_helper_funcs['bisection_1D_var_arg_v']
+    cond_fun = crit_helper_funcs['bisect_cond_fun_crit']
+    step_fun = crit_helper_funcs['bisect_step_fun_ddPsi_1D']
+    return get_crit_curve_1D_raw(dPsi_1D_param_free, ddPsi_1D, param_arr,
+                                 bisection_1D_var_arg_v, cond_fun, step_fun,
+                                 x_low = x_low, x_hi = x_hi)
 
 def linear_interp(x, y):
     return lambda x_interp: jnp.interp(x_interp, x, y)
