@@ -85,7 +85,8 @@ class contour_integral:
                  T_funcs, y, lens_params,
                  critical = False, 
                  T0_min_out_segments = None,
-                 T0_sad_max_segment = None):
+                 T0_sad_max_segment = None,
+                 singular = False):
         
         self.T0_min_out_segments = T0_min_out_segments
         self.multi_image = multi_image
@@ -103,7 +104,11 @@ class contour_integral:
         self.T_images = self.T_1D(x_im, self.y0, self.lens_params)
         self.x_im = x_im
         self.x_im_min = self.x_im[2]
-        self.x_im_max = self.x_im[1]
+        if singular:
+            self.x_im_max = 0.
+            self.x_im[1] = 0.
+        else:
+            self.x_im_max = self.x_im[1]
         self.x_im_sad = self.x_im[0]
         self.T_im_min = self.T_images[2]
         self.T_im_max = self.T_images[1]

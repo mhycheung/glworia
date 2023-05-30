@@ -111,6 +111,8 @@ def get_crit_points_1D(x_init_arr, cond_fun, step_fun, y, lens_params, round_dec
     crit_points_screened = jnp.unique(unique_top_three, size = 3, fill_value = jnp.nan)
     crit_points_screened = nan_to_const(crit_points_screened, 0.)
     crit_points_screened = jnp.sort(crit_points_screened)
+    # crit_sad_max = -jnp.sort(-crit_points_screened[:2])
+    # crit_points_screened = crit_points_screened.at[:2].set(crit_sad_max)
     return const_to_nan(crit_points_screened, 0.)
 
 @partial(jnp.vectorize, excluded={0,1,2,5}, signature = '(),()->(3)')

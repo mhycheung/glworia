@@ -26,7 +26,18 @@ def Psi_NFW(x, lens_params):
         kappa / 2 * (jnp.log(x_safe_hi_norm/2)**2 + jnp.arctan(jnp.sqrt(x_safe_hi_norm**2 - 1))**2))
     return Psi
 
-def Psi_PM(x):
+@jit
+def Psi_gSIS(x, lens_params):
+    k = lens_params[0]
+    return jnp.linalg.norm(x)**(2 - k)/(2 - k)
+
+@jit
+def Psi_CIS(x, lens_params):
+    x_c = lens_params[0]
+    x_t = jnp.sqrt(x_c**2 + jnp.linalg.norm(x)**2)
+    return x_t + x_c * jnp.log(2 * x_c / (x_t + x_c))
+
+def Psi_PM(x, lens_params):
     return jnp.log(jnp.linalg.norm(x))
 
 def make_T_funcs(Psi):
