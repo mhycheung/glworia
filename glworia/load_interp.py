@@ -2,12 +2,37 @@ import numpy as np
 import pickle
 import os
 
+def get_interp_dir_name(settings):
+
+    y_low = settings['y_low']
+    y_high = settings['y_high']
+    lens_param_name = settings['lens_param_name']
+    lp_low = settings[lens_param_name + '_low']
+    lp_high = settings[lens_param_name + '_high']
+    N_grid = settings['N_grid']
+    N_grid_strong = settings['N_grid_strong']
+    N_crit = settings['N_crit']
+    N = settings['N']
+    lens_model_name = settings['lens_model_name']
+    y_low_im = settings['y_low_im']
+    y_high_im = settings['y_high_im']
+    lp_low_im = settings[lens_param_name + '_low_im']
+    lp_high_im = settings[lens_param_name + '_high_im']
+    N_grid_im = settings['N_grid_im']
+    N_crit_im = settings['N_crit_im']
+
+    interpolate_dir_name = f'{lens_model_name}_y_{y_low:.3f}_{y_high:.3f}_{lens_param_name}_{lp_low:.3f}_{lp_high:.3f}_N_grid_{N_grid}_N_grid_strong_{N_grid_strong}_N_crit_{N_crit}_N_{N}'
+    image_interp_dir_name = f'{lens_model_name}_y_{y_low_im:.3f}_{y_high_im:.3f}_{lens_param_name}_{lp_low_im:.3f}_{lp_high_im:.3f}_N_{N_grid_im}_N_crit_{N_crit_im}'
+
+    return interpolate_dir_name, image_interp_dir_name
+
 def load_interpolators(interpolation_root_dir, **kwargs):
 
     y_low = kwargs['y_low']
     y_high = kwargs['y_high']
-    kappa_low = kwargs['kappa_low']
-    kappa_high = kwargs['kappa_high']
+    lens_param_name = kwargs['lens_param_name']
+    lp_low = kwargs[lens_param_name + '_low']
+    lp_high = kwargs[lens_param_name + '_high']
     N_grid = kwargs['N_grid']
     N_grid_strong = kwargs['N_grid_strong']
     N_crit = kwargs['N_crit']
@@ -18,13 +43,12 @@ def load_interpolators(interpolation_root_dir, **kwargs):
 
     y_low_im = kwargs['y_low_im']
     y_high_im = kwargs['y_high_im']
-    kappa_low_im = kwargs['kappa_low_im']
-    kappa_high_im = kwargs['kappa_high_im']
+    lp_low_im = kwargs[lens_param_name + '_low_im']
+    lp_high_im = kwargs[lens_param_name + '_high_im']
     N_grid_im = kwargs['N_grid_im']
     N_crit_im = kwargs['N_crit_im']
 
-    interpolate_dir_name = f'y_{y_low:.3f}_{y_high:.3f}_kappa_{kappa_low:.3f}_{kappa_high:.3f}_N_grid_{N_grid}_N_grid_strong_{N_grid_strong}_N_crit_{N_crit}_N_{N}'
-    image_interp_dir_name = f'{lens_model_name}_y_{y_low_im:.3f}_{y_high_im:.3f}_kappa_{kappa_low_im:.3f}_{kappa_high_im:.3f}_N_{N_grid_im}_N_crit_{N_crit_im}'
+    interpolate_dir_name, image_interp_dir_name = get_interp_dir_name(kwargs)
 
     interpolate_dir = os.path.join(interpolation_root_dir, interpolate_dir_name)
     image_interp_dir = os.path.join(interpolation_root_dir, image_interp_dir_name)
@@ -188,12 +212,13 @@ def smooth_increase(x, x0, a):
 def smooth_decrease(x, x0, a):
     return 1 - smooth_increase(x, x0, a)
 
-def interp_partitions(w_interp, ws, Fs, partitions, sigs, T_im, mu_im):
+def interp_partitions(w_interp, ws, Fs, partitions, sigs, T_im, mu_im, return_geom = False):
     F_interp = np.zeros_like(w_interp, dtype = np.complex128)
     F_interp_raw = [np.ones_like(w_interp, dtype=np.complex128)]
     for i, (w, F) in enumerate(zip(ws, Fs)):
         F_interp_raw.append(np.interp(w_interp, w, F, left = 1., right = 0.))
-    F_interp_raw.append(F_geom(w_interp, T_im, mu_im))
+    F_geometric = F_geom(w_interp, T_im, mu_im)
+    F_interp_raw.append(F_geometric)
     for i in range(len(partitions)):
         if i == 0:
             F_interp += F_interp_raw[i]*smooth_decrease(w_interp, partitions[i], sigs[i])
@@ -202,9 +227,15 @@ def interp_partitions(w_interp, ws, Fs, partitions, sigs, T_im, mu_im):
                         *smooth_decrease(w_interp, partitions[i+1], sigs[i+1])
         else:
             F_interp += F_interp_raw[i+1]*smooth_increase(w_interp, partitions[i], sigs[i])
+    if return_geom:
+        return F_interp, F_geometric
     return F_interp
 
-def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings):
+def strong_lens_cond_override_default(strongly_lensed, y_interp, kappa_interp):
+    return strongly_lensed
+
+def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_geom = False,
+             strong_lens_cond_override = strong_lens_cond_override_default):
 
     N = settings['N']
     T0_max = settings['T0_max']
@@ -228,6 +259,7 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings):
 
     T_sad = interp_strong_full_sad_T_adj(y_interp, kappa_interp)
     strongly_lensed = ~np.isnan(T_sad)
+    strongly_lensed = strong_lens_cond_override(strongly_lensed, y_interp, kappa_interp)
 
     if strongly_lensed:
         u_interp_low = interp_strong_low(y_interp, kappa_interp).ravel()
@@ -245,6 +277,7 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings):
         u_interp_mid_1 = interp_weak_mid_1(y_interp, kappa_interp).ravel()
         u_interp_mid_2 = interp_weak_mid_2(y_interp, kappa_interp).ravel()
         u_interp_high = interp_weak_high(y_interp, kappa_interp).ravel()
+        u_interp_sad_max = None
         T_sad_interp = interp_T_vir(y_interp, kappa_interp)
         T_max_interp = np.nan
         mu_sad_interp = np.nan
@@ -293,7 +326,7 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings):
         T_im = [0, 0, 0]
 
     w_trans_1 = 2.5/T_im_hi
-    w_trans_2 = 250/T_im_hi if strongly_lensed else 1000/T_im_hi
+    w_trans_2 = 250/T_im_hi if strongly_lensed else 50/T_im_hi
 
     w_list = [w_arr_low, w_arr_high]
     F_list = [Fw_low, Fw_high]
@@ -301,6 +334,14 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings):
     partitions = np.array([w_low_trans, w_trans_1, w_trans_2])
     sigs = partitions/10
 
-    F_interp = interp_partitions(w_interp, w_list, F_list, partitions, sigs, T_im, mu_im)
+    if return_geom:
 
-    return F_interp
+        F_interp, F_geometric = interp_partitions(w_interp, w_list, F_list, partitions, sigs, T_im, mu_im, 
+                                 return_geom = return_geom)
+        return F_interp, F_geometric, partitions, T_im, mu_im, u_interp_low, u_interp_mid_1, u_interp_mid_2, u_interp_high, u_interp_sad_max
+    
+    else:
+            
+        F_interp = interp_partitions(w_interp, w_list, F_list, partitions, sigs, T_im, mu_im, 
+                                        return_geom = return_geom)
+        return F_interp
