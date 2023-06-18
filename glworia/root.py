@@ -102,6 +102,10 @@ def make_bisection_1D_v():
 def make_bisection_1D_var_arg_v():
     return jnp.vectorize(bisection_1D, excluded={0, 1, 2, 3, 4, 5}, signature = '(1,1)->()')
 
+def make_bisection_1D_var_2D():
+    bisection_1D_var_2D = lambda T, T0, x_low, x_hi, cond_fun, step_fun, y, lp: bisection_1D(T, T0, x_low, x_hi, cond_fun, step_fun, [y, jnp.atleast_1d(lp)])
+    return jnp.vectorize(bisection_1D_var_2D, excluded={0, 1, 2, 3, 4, 5}, signature = '(),()->()')
+
 def get_crit_points_1D(x_init_arr, cond_fun, step_fun, y, lens_params, round_decimal = 8):
     args = (y, jnp.atleast_1d(lens_params))
     crit_points_full = (newton_1D(x_init_arr, cond_fun, step_fun, args))

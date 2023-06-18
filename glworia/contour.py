@@ -16,14 +16,18 @@ def rk4_step(f, x, h, y, lens_params):
 @partial(jit, static_argnums=(1, 2, 3, 4, 5))
 def contour_int_step_func_full(x_iter, T, dT, dT_norm, f, T_hess_det, h):
     x_old = x_iter[0]
+    r = jnp.linalg.norm(x_old)
     u_acc_old = x_iter[2]
     T0 = x_iter[4]
     iter = x_iter[5] + 1
     y = x_iter[7]
     lens_params = x_iter[8]
-    kappa = jnp.min(jnp.array([100., 
+    kappa = jnp.min(jnp.array([
+        jnp.max(jnp.array([100., 1/r])), 
         jnp.max(
-            jnp.array([jnp.abs(T_hess_det(x_old, y, lens_params)/dT_norm(x_old, y, lens_params)), 0.1]))]
+            jnp.array([jnp.abs(T_hess_det(x_old, y, lens_params)/dT_norm(x_old, y, lens_params)), 
+                       jnp.max(jnp.array([0.1, 1/r]))
+                       ]))]
                      ))
     # kappa = jnp.min(jnp.array([5., 
     #     jnp.max(
@@ -33,6 +37,7 @@ def contour_int_step_func_full(x_iter, T, dT, dT_norm, f, T_hess_det, h):
     x_prop = x_old + dx_prop
     T_prop = T(x_prop, y, lens_params)
     dx_new = dT(x_prop, y, lens_params)/dT_norm(x_prop, y, lens_params)**2*(T0 - T_prop)
+    #FIXME: dx_new could overshoot if near a cusp
     x_new = x_prop + dx_new
     l = jnp.linalg.norm(x_new - x_old)
     dT_norm_mid = dT_norm((x_new + x_old)/2, y, lens_params)
@@ -44,7 +49,8 @@ def make_contour_int_step_func(T, dT, dT_norm, f, T_hess_det, h):
 
 @jit
 def contour_int_cond_func_full(x_iter):
-    return x_iter[0][1]*x_iter[1][1] >= 0
+    #FIXME: hardcoded max iter
+    return (x_iter[0][1]*x_iter[1][1] >= 0) & (x_iter[5] < 5000)
 
 @partial(jnp.vectorize, signature='(),(2)->(),()', excluded=(2, 3, 4, 5))
 @partial(jit, static_argnums=(2, 3))
@@ -159,8 +165,8 @@ class contour_integral:
                 contour_cond_fun, contour_step_fun, self.y, self.lens_params)
         
     def find_T_for_max_u(self, T0_arr, bisection_1D_v, bisect_cond_fun, bisect_step_fun_T_1D, 
-                   contour_cond_fun, contour_step_fun):
-        for i in range(2):
+                   contour_cond_fun, contour_step_fun, iters):
+        for i in range(iters):
             x_inits = make_x_inits_seg(T0_arr+self.T_im_min, 
                                     self.x_im_min, self.x_outer, self.args_1D, bisection_1D_v, bisect_cond_fun,
                                 bisect_step_fun_T_1D, self.T_1D)
