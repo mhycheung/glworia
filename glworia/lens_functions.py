@@ -33,9 +33,14 @@ def Psi_gSIS(x, lens_params):
 
 @jit
 def Psi_CIS(x, lens_params):
-    x_c = lens_params[0]
+    x_c = jnp.abs(lens_params[0])
     x_t = jnp.sqrt(x_c**2 + jnp.linalg.norm(x)**2)
-    return x_t + x_c * jnp.log(2 * x_c / (x_t + x_c))
+    x_c_safe = jnp.where(x_c > 1e-15, x_c, 1e-15)
+    Psi = jnp.where(x_c > 1e-15, 
+            x_t + x_c_safe * jnp.log(2 * x_c_safe / (x_t + x_c_safe)), 
+            x_t
+                    )
+    return Psi
 
 def Psi_PM(x, lens_params):
     return jnp.log(jnp.linalg.norm(x))

@@ -172,9 +172,14 @@ class contour_integral:
                                 bisect_step_fun_T_1D, self.T_1D)
             u, iter = contour_int(T0_arr + self.T_im_min, x_inits,
                                     contour_cond_fun, contour_step_fun, self.y, self.lens_params)
-            max_indx = jnp.argmax(u)
-            T0_arr = jnp.linspace(T0_arr[max_indx-1], T0_arr[max_indx+1], len(T0_arr))
-        self.T_vir = T0_arr[max_indx]
+            max_u_indx = jnp.argmax(u)
+            # du2 = jnp.diff(u, n = 2)
+            # print(du2)
+            # max_du2_indx = jnp.argmax(du2) + 1
+            max_indx = max_u_indx#jnp.max(jnp.array([max_u_indx, max_du2_indx]))
+            print(max_indx, T0_arr[max_indx], T0_arr[0], T0_arr[-1])
+            self.T_vir = T0_arr[max_indx]
+            T0_arr = jnp.linspace(T0_arr[int(jnp.max(jnp.array([0, max_indx-1])))], T0_arr[max_indx+1], len(T0_arr))
         return self.T_vir
 
 
