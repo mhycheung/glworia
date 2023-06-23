@@ -39,3 +39,20 @@ def lal_binary_black_hole_lensed(
     waveform_dict["plus"] *= Fs
     waveform_dict["cross"] *= Fs
     return waveform_dict
+
+def lal_binary_black_hole_unlensed(
+        frequency_array, mass_1, mass_2, luminosity_distance, a_1, tilt_1,
+        phi_12, a_2, tilt_2, phi_jl, theta_jn, phase, **kwargs):
+
+    waveform_kwargs = dict(
+        waveform_approximant='IMRPhenomPv2', reference_frequency=50.0,
+        minimum_frequency=20.0, maximum_frequency=frequency_array[-1],
+        catch_waveform_errors=False, pn_spin_order=-1, pn_tidal_order=-1,
+        pn_phase_order=-1, pn_amplitude_order=0)
+    waveform_kwargs.update(kwargs)
+    waveform_dict = _base_lal_cbc_fd_waveform(
+        frequency_array=frequency_array, mass_1=mass_1, mass_2=mass_2,
+        luminosity_distance=luminosity_distance, theta_jn=theta_jn, phase=phase,
+        a_1=a_1, a_2=a_2, tilt_1=tilt_1, tilt_2=tilt_2, phi_12=phi_12,
+        phi_jl=phi_jl, **waveform_kwargs)
+    return waveform_dict
