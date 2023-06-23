@@ -23,18 +23,6 @@ def chev_first_half(a, b, n):
     chev_half = jnp.where(reg < 0, 2*chev/chev_inner_width, reg)
     return (a+b)/2 + (b-a)/2 * chev_half
 
-# def chev_points_np(a, b, n):
-#     chev = -np.cos(np.pi*(np.arange(n)+0.5)/n)
-#     chev_inner_width = chev[-1]-chev[0]
-#     return (a+b)/2 + (b-a)/chev_inner_width * chev
-
-# def chev_first_half_np(a, b, n):
-#     chev = -np.cos(np.pi*(np.arange(n)+0.5)/n)
-#     chev_inner_width = chev[-1]-chev[0]
-#     reg = np.linspace(-1, 1, n)
-#     chev_half = np.where(reg < 0, 2*chev/chev_inner_width, reg)
-#     return (a+b)/2 + (b-a)/2 * chev_half
-
 def make_T0_arr_multiple_chev(N, T_images, T0_max):
     T_im_sad = T_images[0]
     T_im_max = T_images[1]
@@ -188,6 +176,7 @@ def amplification_computation_prep(Psi, **kwargs):
 
 #     return 
 def y_crit_override_default(y_crit, lens_params):
+    y_crit = jax.lax.cond(y_crit < 0, lambda y_crit: jnp.zeros_like(y_crit), lambda y_crit: y_crit, y_crit)
     return y_crit
 
 def x_im_nan_sub_default(x_im, y0, lens_params):
@@ -202,7 +191,7 @@ def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_func
                 'crit_screen_round_decimal': 7, 'T0_max': 1000, 
                 'crit_run': False, 'N': 100, 'return_all': False, 'singular': False,
                 'origin_type': origin_type_default, 'y_crit_override': y_crit_override_default,
-                'x_im_nan_sub': x_im_nan_sub_default}
+                'x_im_nan_sub': x_im_nan_sub_default, 'T_vir_low_bound' : 1e-2}
     settings.update(kwargs)
 
     return_all = settings['return_all']
@@ -247,14 +236,15 @@ def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_func
 
     y0 = y[0]
 
-    x_im = get_crit_points_1D(
+    x_im_raw = get_crit_points_1D(
                         crit_x_init_arr,
                         newt_cond_fun,
                         newt_step_fun,
                         y0,
                         lens_params,
                         crit_screen_round_decimal)
-    x_im = x_im_nan_sub(x_im, y0, lens_params)
+    x_im = x_im_nan_sub(x_im_raw, y0, lens_params)
+    # print(x_im)
     if origin != 'regular':
         # if 0. not in x_im:
         #     x_im = jnp.concatenate([jnp.array([0.]), x_im])
@@ -289,17 +279,21 @@ def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_func
 
     if not multi_image:
         if overrode:
+            T_vir_low_bound = settings['T_vir_low_bound']
             #FIXME: 100. is hardcoded
-            T0_find_max = jnp.linspace(0., 100., N)
-            iters = 3
+            T0_find_max = jnp.linspace(T_vir_low_bound, 100., N)
+            iters = 5
+            print('overrode')
         else:
-            T0_find_max = jnp.linspace(T_vir*0.5, T_vir*1.5, N)
+            T0_find_max = jnp.linspace(T_vir*1e-3, T_vir*1.5, N)
             iters = 2
         contour_int.set_T_max(jnp.max(T0_find_max))
         contour_int.find_T_outer(bisect_cond_fun, bisect_step_fun_T_1D)
+        print(T0_find_max[0], T0_find_max[-1])
         T_val_max = contour_int.find_T_for_max_u(T0_find_max,bisection_1D_v, bisect_cond_fun, 
                                     bisect_step_fun_T_1D, 
                         contour_cond_func, contour_step_func, iters)
+        print(T_val_max)
         T0_min_out_segs, T0_arr_sad_max = make_T0_arr_multiple_chev(N, jnp.array([T_val_max, jnp.nan, 0.]), T0_max)
     else:
         T_val_max = jnp.nan
@@ -395,7 +389,7 @@ def compute_F(w_interp, y, lens_params, T_funcs, helper_funcs, crit_funcs,
     w_arr_low, Fw_low = amplification_fft_jnp(t_fft_long, F_fft_long)
 
     if not strongly_lensed:
-        mu_im.at[:2].set(jnp.array([0., 0.]))
+        mu_im = mu_im.at[:2].set(jnp.array([0., 0.]))
         T_im = jnp.zeros_like(T_im)
 
     w_trans_1 = 2.5/T_im_hi
@@ -455,8 +449,11 @@ def crtical_curve_interpolants(param_arr, T_funcs, crit_curve_helper_funcs, add_
     lens_param_to_x_crit = lambda param: jnp.interp(param, param_arr, -x_crit)
     lens_param_to_y_crit = lambda param: jnp.interp(param, param_arr, y_crit)
     x_crit_to_lens_param = lambda x: jnp.interp(x, -x_crit, param_arr)
-    y_crit_to_lens_param = lambda y: jnp.interp(y, y_crit, param_arr, left = jnp.nan, right = jnp.nan)
-    y_crit_to_x_crit = lambda y: jnp.interp(y, y_crit, -x_crit)
+    y_crit_ordered = jax.lax.cond(y_crit[1] > y_crit[0], lambda y: y, lambda y: jnp.flip(y), y_crit)
+    param_arr_ordered = jax.lax.cond(y_crit[1] > y_crit[0], lambda y: y, lambda y: jnp.flip(y), param_arr)
+    x_crit_ordered = jax.lax.cond(y_crit[1] > y_crit[0], lambda y: y, lambda y: jnp.flip(y), -x_crit)
+    y_crit_to_lens_param = lambda y: jnp.interp(y, y_crit_ordered, param_arr_ordered, left = jnp.nan, right = jnp.nan)
+    y_crit_to_x_crit = lambda y: jnp.interp(y, y_crit_ordered, -x_crit_ordered)
 
     crit_funcs = {'lens_param_to_x_crit': lens_param_to_x_crit, 
                 'lens_param_to_y_crit': lens_param_to_y_crit,

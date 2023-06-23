@@ -38,7 +38,6 @@ def interp_partitions_jnp(w_interp, ws, Fs, partitions, sigs, T_im, mu_im, origi
     if origin not in ['regular', 'im']:
         mu_im.at[1].set(0.)
         T_im.at[1].set(0.)
-    print(mu_im, T_im)
     F_interp = jnp.zeros_like(w_interp, dtype = jnp.complex128)
     F_interp_raw = [jnp.ones_like(w_interp, dtype=jnp.complex128)]
     for i, (w, F) in enumerate(zip(ws, Fs)):
