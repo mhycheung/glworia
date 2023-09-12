@@ -51,4 +51,4 @@ def interp_partitions_jnp(w_interp, ws, Fs, partitions, sigs, T_im, mu_im, origi
                         *smooth_decrease_jnp(w_interp, partitions[i+1], sigs[i+1])
         else:
             F_interp += F_interp_raw[i+1]*smooth_increase_jnp(w_interp, partitions[i], sigs[i])
-    return F_interp
+    return F_interp, F_interp_raw

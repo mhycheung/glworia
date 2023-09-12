@@ -11,6 +11,8 @@ from glworia.root import *
 from glworia.contour import *
 from glworia.frequency_domain import *
 
+from scipy.interpolate import interp1d
+
 def chev_points(a, b, n):
     chev = -jnp.cos(jnp.pi*(jnp.arange(n)+0.5)/n)
     chev_inner_width = chev[-1]-chev[0]
@@ -401,9 +403,9 @@ def compute_F(w_interp, y, lens_params, T_funcs, helper_funcs, crit_funcs,
     partitions = jnp.array([w_low_trans, w_trans_1, w_trans_2])
     sigs = partitions/10
 
-    F_interp = interp_partitions_jnp(w_interp, w_list, F_list, partitions, sigs, T_im, mu_im, origin = origin)
+    F_interp, F_interp_raw = interp_partitions_jnp(w_interp, w_list, F_list, partitions, sigs, T_im, mu_im, origin = origin)
 
-    return F_interp, contour_obj, partitions
+    return F_interp, F_interp_raw, contour_obj, partitions
 
     # def amplification_fft(contour_integral, fft_len, t_min = 0, t_max = None):
         
@@ -454,6 +456,34 @@ def crtical_curve_interpolants(param_arr, T_funcs, crit_curve_helper_funcs, add_
     x_crit_ordered = jax.lax.cond(y_crit[1] > y_crit[0], lambda y: y, lambda y: jnp.flip(y), -x_crit)
     y_crit_to_lens_param = lambda y: jnp.interp(y, y_crit_ordered, param_arr_ordered, left = jnp.nan, right = jnp.nan)
     y_crit_to_x_crit = lambda y: jnp.interp(y, y_crit_ordered, -x_crit_ordered)
+
+    crit_funcs = {'lens_param_to_x_crit': lens_param_to_x_crit, 
+                'lens_param_to_y_crit': lens_param_to_y_crit,
+                'x_crit_to_lens_param': x_crit_to_lens_param,
+                'y_crit_to_lens_param': y_crit_to_lens_param,
+                'y_crit_to_x_crit': y_crit_to_x_crit}
+    
+    return crit_funcs
+
+def crtical_curve_interpolants_np(param_arr, T_funcs, crit_curve_helper_funcs, add_y = np.array([]), add_x = np.array([]), 
+                               add_param = np.array([]), add_indxs = np.array([-1])):
+    x_crit, y_crit = get_crit_curve_1D(param_arr, T_funcs, crit_curve_helper_funcs, x_hi = 100.)
+    x_crit = np.insert(x_crit, add_indxs, add_x)
+    y_crit = np.insert(y_crit, add_indxs, add_y)
+    param_arr = np.insert(param_arr, add_indxs, add_param)
+    lens_param_to_x_crit = interp1d(param_arr, -x_crit)
+    lens_param_to_y_crit = interp1d(param_arr, y_crit)
+    x_crit_to_lens_param = interp1d(-x_crit, param_arr)
+    if y_crit[1] > y_crit[0]:
+        y_crit_ordered = y_crit
+        param_arr_ordered = param_arr
+        x_crit_ordered = -x_crit
+    else:
+        y_crit_ordered = np.flip(y_crit)
+        param_arr_ordered = np.flip(param_arr)
+        x_crit_ordered = np.flip(-x_crit)
+    y_crit_to_lens_param = interp1d(y_crit_ordered, param_arr_ordered, fill_value = np.nan, bounds_error = False)
+    y_crit_to_x_crit = interp1d(y_crit_ordered, -x_crit_ordered)
 
     crit_funcs = {'lens_param_to_x_crit': lens_param_to_x_crit, 
                 'lens_param_to_y_crit': lens_param_to_y_crit,

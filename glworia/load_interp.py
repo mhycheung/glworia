@@ -345,3 +345,7 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_g
         F_interp = interp_partitions(w_interp, w_list, F_list, partitions, sigs, T_im, mu_im, 
                                         return_geom = return_geom)
         return F_interp
+    
+def crit_mask(y, lp, y_interp_func, fac = 0.1):
+    y_crit = y_interp_func(lp)
+    return np.abs(y - y_crit) < fac*y_crit
