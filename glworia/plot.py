@@ -1,5 +1,30 @@
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import jax.numpy as jnp
+
+mpl.rcParams['xtick.major.size'] = 4
+mpl.rcParams['ytick.major.size'] = 4
+mpl.rcParams['xtick.minor.size'] = 2
+mpl.rcParams['ytick.minor.size'] = 2
+
+mpl.rcParams['xtick.direction'] = 'in'
+mpl.rcParams['ytick.direction'] = 'in'
+plt.rcParams['xtick.bottom'] = plt.rcParams['xtick.top'] = True
+plt.rcParams['ytick.left'] = plt.rcParams['ytick.right'] = True
+plt.rcParams['xtick.labeltop'] = plt.rcParams['ytick.labelright'] = False
+mpl.rcParams['axes.unicode_minus'] = False
+
+params = {'axes.labelsize': 18,
+          'font.family': 'serif',
+          'font.size': 9,
+          'legend.fontsize': 12,
+          'xtick.labelsize': 11,
+          'ytick.labelsize': 11,
+          'savefig.dpi': 200,
+          'lines.markersize': 6,
+          'axes.formatter.limits': (-3, 3)}
+
+mpl.rcParams.update(params)
 
 def contour_plot_T(T, xlim = (-1, 1), ylim = (-1, 1), levels = 20):
     fig, ax = plt.subplots()
