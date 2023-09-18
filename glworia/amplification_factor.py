@@ -177,6 +177,8 @@ def amplification_computation_prep(Psi, **kwargs):
 #     contour_integral.sum_results()
 
 #     return 
+
+@partial(jnp.vectorize, signature = '(),()->()')
 def y_crit_override_default(y_crit, lens_params):
     y_crit = jax.lax.cond(y_crit < 0, lambda y_crit: jnp.zeros_like(y_crit), lambda y_crit: y_crit, y_crit)
     return y_crit
@@ -246,11 +248,7 @@ def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_func
                         lens_params,
                         crit_screen_round_decimal)
     x_im = x_im_nan_sub(x_im_raw, y0, lens_params)
-    # print(x_im)
     if origin != 'regular':
-        # if 0. not in x_im:
-        #     x_im = jnp.concatenate([jnp.array([0.]), x_im])
-        #     x_im = jnp.sort(x_im)[:3]
         x_im = x_im.at[1].set(0.)
     T_images_raw = T_1D(x_im, y0, lens_params)
     T_min = T_images_raw[2]
@@ -285,17 +283,14 @@ def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_func
             #FIXME: 100. is hardcoded
             T0_find_max = jnp.linspace(T_vir_low_bound, 100., N)
             iters = 5
-            print('overrode')
         else:
             T0_find_max = jnp.linspace(T_vir*1e-3, T_vir*1.5, N)
             iters = 2
         contour_int.set_T_max(jnp.max(T0_find_max))
         contour_int.find_T_outer(bisect_cond_fun, bisect_step_fun_T_1D)
-        print(T0_find_max[0], T0_find_max[-1])
         T_val_max = contour_int.find_T_for_max_u(T0_find_max,bisection_1D_v, bisect_cond_fun, 
                                     bisect_step_fun_T_1D, 
                         contour_cond_func, contour_step_func, iters)
-        print(T_val_max)
         T0_min_out_segs, T0_arr_sad_max = make_T0_arr_multiple_chev(N, jnp.array([T_val_max, jnp.nan, 0.]), T0_max)
     else:
         T_val_max = jnp.nan
@@ -395,7 +390,7 @@ def compute_F(w_interp, y, lens_params, T_funcs, helper_funcs, crit_funcs,
         T_im = jnp.zeros_like(T_im)
 
     w_trans_1 = 2.5/T_im_hi
-    w_trans_2 = 250/T_im_hi if strongly_lensed else 1000/T_im_hi
+    w_trans_2 = 250/T_im_hi if strongly_lensed else 50/T_im_hi
 
     w_list = [w_arr_low[1:], w_arr_high]
     F_list = [Fw_low[1:], Fw_high]
@@ -492,3 +487,6 @@ def crtical_curve_interpolants_np(param_arr, T_funcs, crit_curve_helper_funcs, a
                 'y_crit_to_x_crit': y_crit_to_x_crit}
     
     return crit_funcs
+
+def low_w_approximation(w, Psi):
+    return 1 - 1.j*w*Psi(jnp.exp(1.j*jnp.pi/4)/jnp.sqrt(w)) - w**2/2*Psi(jnp.exp(1.j*jnp.pi/4)/jnp.sqrt(w))**2
