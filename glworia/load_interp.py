@@ -48,10 +48,14 @@ def load_interpolators(interpolation_root_dir, **kwargs):
     N_grid_im = kwargs['N_grid_im']
     N_crit_im = kwargs['N_crit_im']
 
+    crit_param_high = kwargs['crit_param_high']
+    crit_param_low = kwargs['crit_param_low']
+
     interpolate_dir_name, image_interp_dir_name = get_interp_dir_name(kwargs)
 
     interpolate_dir = os.path.join(interpolation_root_dir, interpolate_dir_name)
     image_interp_dir = os.path.join(interpolation_root_dir, image_interp_dir_name)
+    crit_interp_dir = os.path.join(interpolation_root_dir, 'crit_funcs')
 
     with open(os.path.join(interpolate_dir, 'interp_strong_low.pkl'), 'rb') as f:
         interp_strong_low = pickle.load(f)
@@ -101,6 +105,13 @@ def load_interpolators(interpolation_root_dir, **kwargs):
     with open(os.path.join(image_interp_dir, 'strong_full_min_mu.pkl'), 'rb') as f:
         interp_strong_full_min_mu = pickle.load(f)
 
+    crit_func_file_name = f"{lens_model_name}_crit_funcs_{crit_param_low:.3f}_{crit_param_high:.3f}.pkl"
+
+    with open(os.path.join(crit_interp_dir, crit_func_file_name), 'rb') as f:
+        crit_funcs = pickle.load(f)
+
+    lens_param_to_y_crit = crit_funcs['lens_param_to_y_crit']
+
     interpolators = {
         'interp_strong_low': interp_strong_low,
         'interp_strong_mid_1': interp_strong_mid_1,
@@ -117,7 +128,8 @@ def load_interpolators(interpolation_root_dir, **kwargs):
         'interp_strong_full_max_T_adj': interp_strong_full_max_T_adj,
         'interp_strong_full_sad_mu': interp_strong_full_sad_mu,
         'interp_strong_full_max_mu': interp_strong_full_max_mu,
-        'interp_strong_full_min_mu': interp_strong_full_min_mu
+        'interp_strong_full_min_mu': interp_strong_full_min_mu,
+        'lens_param_to_y_crit': lens_param_to_y_crit
     }
 
     return interpolators
@@ -235,10 +247,11 @@ def strong_lens_cond_override_default(strongly_lensed, y_interp, kappa_interp):
     return strongly_lensed
 
 def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_geom = False,
-             strong_lens_cond_override = strong_lens_cond_override_default):
+             strong_lens_cond_override = strong_lens_cond_override_default, mask_crit = True):
 
     N = settings['N']
     T0_max = settings['T0_max']
+    mask_crit_fac = settings['mask_crit_fac']
 
     interp_strong_low = interpolators['interp_strong_low']
     interp_strong_mid_1 = interpolators['interp_strong_mid_1']
@@ -256,6 +269,14 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_g
     interp_strong_full_sad_mu = interpolators['interp_strong_full_sad_mu']
     interp_strong_full_max_mu = interpolators['interp_strong_full_max_mu']
     interp_strong_full_min_mu = interpolators['interp_strong_full_min_mu']
+
+    lens_param_to_y_crit = interpolators['lens_param_to_y_crit']
+
+    if mask_crit:
+        y_crit = lens_param_to_y_crit(kappa_interp)
+        masked = np.abs(y_interp - y_crit) < mask_crit_fac*y_crit
+        if masked:
+            return w_interp*(np.inf + 1.j*np.inf)
 
     T_sad = interp_strong_full_sad_T_adj(y_interp, kappa_interp)
     strongly_lensed = ~np.isnan(T_sad)
