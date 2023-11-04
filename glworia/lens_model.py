@@ -105,8 +105,8 @@ class gSISLens(LensModel):
         bisection_1D_cond_fun = make_bisection_1D_cond_fun(1e-13)
         bisection_1D_step_fun = make_bisection_1D_step_fun(dT_1D)
         @partial(jnp.vectorize, signature = '(3),(),()->(3)')
-        def x_im_nan_sub_gSIS(x_im, y0, lens_params):
-            lens_params = jnp.atleast_1d(lens_params)
+        def x_im_nan_sub_gSIS(x_im, y0, lens_param):
+            lens_params = jnp.atleast_1d(lens_param)
             x_im = jax.lax.cond(jnp.isnan(x_im[0]) & (lens_params[0] > 1.), 
                                 lambda x_im: x_im.at[0].set(
                                     bisection_1D_var_2D(dT_1D, 0., 
@@ -180,8 +180,11 @@ class CISLens(LensModel):
             lens_params = jnp.atleast_1d(lens_params)
             y_crit = jax.lax.cond(lens_params[0] < 1e-15,
                                 lambda y_crit: 1.,
-                                lambda y_crit: y_crit,
-                                operand = y_crit)
+                                lambda y_crit: jax.lax.cond(y_crit < 0.,
+                                                    lambda y_crit: jnp.ones_like(y_crit)*0., 
+                                                    lambda y_crit: y_crit, 
+                                                    y_crit),
+                                y_crit)
             return y_crit
         return y_crit_override_CIS
     

@@ -100,15 +100,6 @@ ifos.inject_signal(
 )
 
 # Set up a PriorDict, which inherits from dict.
-# By default we will sample all terms in the signal models.  However, this will
-# take a long time for the calculation, so for this example we will set almost
-# all of the priors to be equall to their injected values.  This implies the
-# prior is a delta function at the true, injected value.  In reality, the
-# sampler implementation is smart enough to not sample any parameter that has
-# a delta-function prior.
-# The above list does *not* include mass_1, mass_2, theta_jn and luminosity
-# distance, which means those are the parameters that will be included in the
-# sampler.  If we do nothing, then the default priors get used.
 
 priors = bilby.gw.prior.BBHPriorDict()
 
@@ -133,8 +124,8 @@ crit_mask_settings.update(lens_param_to_y_crit = interpolators['lens_param_to_y_
 ylp_masked = Uniform2DMaskDist(
     names = ['y', 'lp'],
     bounds = {
-        'y': [prior_settings['y_min'], prior_settings['y_max']],
-        'lp': [prior_settings['lp_min'], prior_settings['lp_max']]
+        'y': (prior_settings['y_min'], prior_settings['y_max']),
+        'lp': (prior_settings['lp_min'], prior_settings['lp_max'])
     },
     crit_mask_settings = crit_mask_settings)
 
@@ -159,29 +150,43 @@ if 'luminosity_distance_prior_type' in prior_settings:
         unit="Mpc",
     )
 
-for key in [
-    "a_1",
-    "a_2",
-    "tilt_1",
-    "tilt_2",
-    "phi_12",
-    "phi_jl",
-    "psi",
-    "ra",
-    "dec",
-    "geocent_time",
-    "phase",
-]:
-    priors[key] = injection_parameters[key]
+time_delay = ifos[0].time_delay_from_geocenter(
+    injection_parameters["ra"],
+    injection_parameters["dec"],
+    injection_parameters["geocent_time"],
+)
+priors["H1_time"] = bilby.core.prior.Uniform(
+    minimum=injection_parameters["geocent_time"] + time_delay - 0.1,
+    maximum=injection_parameters["geocent_time"] + time_delay + 0.1,
+    name="H1_time",
+    latex_label="$t_H$",
+    unit="$s$",
+)
+del priors["ra"], priors["dec"]
+priors["zenith"] = bilby.core.prior.Sine(latex_label="$\\kappa_z$")
+priors["azimuth"] = bilby.core.prior.Uniform(
+    minimum=0, maximum=2 * np.pi, latex_label="$\\epsilon_a$", boundary="periodic"
+)
+
 
 # Perform a check that the prior does not extend to a parameter space longer than the data
 priors.validate_prior(duration, minimum_frequency)
 
 # Initialise the likelihood by passing in the interferometer data (ifos) and
-# the waveform generator
+# the waveoform generator, as well the priors.
+# The explicit distance marginalization is turned on to improve
+# convergence, and the posterior is recovered by the conversion function.
 likelihood = bilby.gw.GravitationalWaveTransient(
-    interferometers=ifos, waveform_generator=waveform_generator
+    interferometers=ifos,
+    waveform_generator=waveform_generator,
+    priors=priors,
+    distance_marginalization=True,
+    phase_marginalization=False,
+    time_marginalization=False,
+    reference_frame="H1L1",
+    time_reference="H1",
 )
+
 
 # Run sampler.  In this case we're going to use the `dynesty` sampler
 result = bilby.run_sampler(
@@ -191,8 +196,13 @@ result = bilby.run_sampler(
     injection_parameters=injection_parameters,
     outdir=outdir,
     label=label,
+    conversion_function=bilby.gw.conversion.generate_all_bbh_parameters,
+    result_class=bilby.gw.result.CBCResult,
     **sampler_settings,
 )
+
+# Plot the inferred waveform superposed on the actual data.
+result.plot_waveform_posterior(n_samples=1000)
 
 # Make a corner plot.
 result.plot_corner()

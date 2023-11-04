@@ -19,14 +19,14 @@ from glworia.load_interp import *
 
 def lal_binary_black_hole_lensed(
         frequency_array, mass_1, mass_2, luminosity_distance, a_1, tilt_1,
-        phi_12, a_2, tilt_2, phi_jl, theta_jn, phase, MLz, y, kappa, **kwargs):
+        phi_12, a_2, tilt_2, phi_jl, theta_jn, phase, MLz, y, lp, **kwargs):
 
     ws = frequency_array*Mtow*MLz
     F_interp = kwargs['F_interp']
-    Fs = F_interp(ws, y, kappa)
+    Fs = F_interp(ws, y, lp)
     del kwargs['F_interp']
     waveform_kwargs = dict(
-        waveform_approximant='IMRPhenomPv2', reference_frequency=50.0,
+        waveform_approximant='IMRPhenomXAS', reference_frequency=50.0,
         minimum_frequency=20.0, maximum_frequency=frequency_array[-1],
         catch_waveform_errors=False, pn_spin_order=-1, pn_tidal_order=-1,
         pn_phase_order=-1, pn_amplitude_order=0)
@@ -45,7 +45,7 @@ def lal_binary_black_hole_unlensed(
         phi_12, a_2, tilt_2, phi_jl, theta_jn, phase, **kwargs):
 
     waveform_kwargs = dict(
-        waveform_approximant='IMRPhenomPv2', reference_frequency=50.0,
+        waveform_approximant='IMRPhenomXAS', reference_frequency=50.0,
         minimum_frequency=20.0, maximum_frequency=frequency_array[-1],
         catch_waveform_errors=False, pn_spin_order=-1, pn_tidal_order=-1,
         pn_phase_order=-1, pn_amplitude_order=0)

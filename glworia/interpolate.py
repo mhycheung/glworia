@@ -142,7 +142,7 @@ def make_grid_points(settings, functions_dict = None, mid_point = False):
 
     return weak_points, strong_points, crit_points_in_bound, crit_T_vir, lens_param_to_y_crit
 
-def interpolate(settings, save_dir = None):
+def interpolate(settings, save_dir = None, strong = True, weak = True):
 
     print('''
           
@@ -154,7 +154,15 @@ def interpolate(settings, save_dir = None):
           
           ''')
           
-
+    if strong and weak:
+        print('Both strong and weak-lensing points will be computed.')
+    elif strong:
+        print('Only strong-lensing points will be computed.')
+    elif weak:
+        print('Only weak-lensing points will be computed.')
+    else:
+        raise ValueError('At least one of strong and weak must be True.')
+    
     if save_dir is None:
         save_dir = os.path.join(os.getcwd(), 'interpolation')
 
@@ -211,24 +219,26 @@ def interpolate(settings, save_dir = None):
                                        functions_dict = functions_dict)
     (weak_points, strong_points, crit_points_in_bound, 
      crit_T_vir, lens_param_to_y_crit) = grid_points_out 
+    
+    if strong:
+        u_strong_min_out_list = []
+        u_strong_sad_max_list = []
 
-    u_strong_min_out_list = []
-    u_strong_sad_max_list = []
-
-    for y0, kappa in tqdm(strong_points, desc = 'Computing strong-lensing integrals'):
-        y =jnp.array([y0, 0.])
-        lens_params = jnp.array([kappa])
-        contour_int = amplification_computation_for_interpolation(
-                    T_funcs, 
-                    helper_funcs, 
-                    crit_funcs, 
-                    y, 
-                    lens_params, 
-                    crit_run = False,
-                    N = N,
-                    T0_max = T0_max)
-        u_strong_min_out_list.append(contour_int.u_min_out)
-        u_strong_sad_max_list.append(contour_int.u_sad_max)
+        for y0, kappa in tqdm(strong_points, desc = 'Computing strong-lensing integrals'):
+            y =jnp.array([y0, 0.])
+            lens_params = jnp.array([kappa])
+            contour_int = amplification_computation_for_interpolation(
+                        T_funcs, 
+                        helper_funcs, 
+                        crit_funcs, 
+                        y, 
+                        lens_params, 
+                        crit_run = False,
+                        N = N,
+                        T0_max = T0_max,
+                        **override_funcs_dict)
+            u_strong_min_out_list.append(contour_int.u_min_out)
+            u_strong_sad_max_list.append(contour_int.u_sad_max)
 
     u_crit_min_out_list = []
     u_crit_sad_max_list = []
@@ -245,106 +255,113 @@ def interpolate(settings, save_dir = None):
                     lens_params, 
                     crit_run = True,
                     N = N,
-                    T0_max = T0_max)
+                    T0_max = T0_max,
+                    **override_funcs_dict)
         u_crit_min_out_list.append(contour_int.u_min_out)
         u_crit_sad_max_list.append(contour_int.u_sad_max)
         mu_min_crit_list.append(contour_int.mu_min)
 
-    print('Interpolating and saving strong-lensing points...')
-
-    u_strong_full_min_out = jnp.array(u_strong_min_out_list + u_crit_min_out_list)
-    u_strong_full_sad_max = jnp.array(u_strong_sad_max_list + u_crit_sad_max_list)
-    strong_full_points = jnp.vstack([strong_points, crit_points_in_bound])
-
-    u_points_low = u_strong_full_min_out[:,0,:]
-    u_points_mid_1 = u_strong_full_min_out[:,1,:]
-    u_points_mid_2 = u_strong_full_min_out[:,2,:]
-    u_points_high = u_strong_full_min_out[:,3,:]
-
-    interp_low = LinearNDInterpolator(strong_full_points, u_points_low)
-    interp_mid_1 = LinearNDInterpolator(strong_full_points, u_points_mid_1)
-    interp_mid_2 = LinearNDInterpolator(strong_full_points, u_points_mid_2)
-    interp_high = LinearNDInterpolator(strong_full_points, u_points_high)
-    interp_sad_max = LinearNDInterpolator(strong_full_points, u_strong_full_sad_max)
-
     interpolate_dir_name = f'{lens_model_name}_amp_y_{y_low:.3f}_{y_high:.3f}_{lp_name}_{lp_low:.3f}_{lp_high:.3f}_N_grid_{N_grid}_N_grid_strong_{N_grid_strong}_N_crit_{N_crit}_N_{N}'
-
     interpolate_dir_path = os.path.join(save_dir, interpolate_dir_name)
     os.makedirs(interpolate_dir_path, exist_ok = True)
+    
+    if strong:
+        print('Interpolating and saving strong-lensing points...')
 
-    with open(os.path.join(interpolate_dir_path,'interp_strong_low.pkl'), 'wb') as f:
-        pickle.dump(interp_low, f)
+        u_strong_full_min_out = jnp.array(u_strong_min_out_list + u_crit_min_out_list)
+        u_strong_full_sad_max = jnp.array(u_strong_sad_max_list + u_crit_sad_max_list)
+        strong_full_points = jnp.vstack([strong_points, crit_points_in_bound])
 
-    with open(os.path.join(interpolate_dir_path,'interp_strong_mid_1.pkl'), 'wb') as f:
-        pickle.dump(interp_mid_1, f)
+        u_points_low = u_strong_full_min_out[:,0,:]
+        u_points_mid_1 = u_strong_full_min_out[:,1,:]
+        u_points_mid_2 = u_strong_full_min_out[:,2,:]
+        u_points_high = u_strong_full_min_out[:,3,:]
 
-    with open(os.path.join(interpolate_dir_path,'interp_strong_mid_2.pkl'), 'wb') as f:
-        pickle.dump(interp_mid_2, f)
+        interp_low = LinearNDInterpolator(strong_full_points, u_points_low)
+        interp_mid_1 = LinearNDInterpolator(strong_full_points, u_points_mid_1)
+        interp_mid_2 = LinearNDInterpolator(strong_full_points, u_points_mid_2)
+        interp_high = LinearNDInterpolator(strong_full_points, u_points_high)
+        interp_sad_max = LinearNDInterpolator(strong_full_points, u_strong_full_sad_max)
 
-    with open(os.path.join(interpolate_dir_path,'interp_strong_high.pkl'), 'wb') as f:
-        pickle.dump(interp_high, f)
+        with open(os.path.join(interpolate_dir_path,'interp_strong_low.pkl'), 'wb') as f:
+            pickle.dump(interp_low, f)
 
-    with open(os.path.join(interpolate_dir_path,'interp_strong_sad_max.pkl'), 'wb') as f:
-        pickle.dump(interp_sad_max, f)
+        with open(os.path.join(interpolate_dir_path,'interp_strong_mid_1.pkl'), 'wb') as f:
+            pickle.dump(interp_mid_1, f)
 
-    u_weak_min_out_list = []
-    T_vir_list = []
-    mu_min_weak_list = []
+        with open(os.path.join(interpolate_dir_path,'interp_strong_mid_2.pkl'), 'wb') as f:
+            pickle.dump(interp_mid_2, f)
 
-    for y0, kappa in tqdm(weak_points, desc = 'Computing weak-lensing integrals'):
-        y =jnp.array([y0, 0.])
-        lens_params = jnp.array([kappa])
-        contour_int = amplification_computation_for_interpolation(
-                    T_funcs, 
-                    helper_funcs, 
-                    crit_funcs, 
-                    y, 
-                    lens_params, 
-                    crit_run = False,
-                    N = N,
-                    T0_max = T0_max)
-        u_weak_min_out_list.append(contour_int.u_min_out)
-        T_vir_list.append(contour_int.T_vir)
-        mu_min_weak_list.append(contour_int.mu_min)
+        with open(os.path.join(interpolate_dir_path,'interp_strong_high.pkl'), 'wb') as f:
+            pickle.dump(interp_high, f)
 
-    print('Interpolating and saving weak-lensing points...')
+        with open(os.path.join(interpolate_dir_path,'interp_strong_sad_max.pkl'), 'wb') as f:
+            pickle.dump(interp_sad_max, f)
 
-    u_weak_full_min_out = jnp.array(u_weak_min_out_list + u_crit_min_out_list)
-    weak_full_points = jnp.vstack([weak_points, crit_points_in_bound])
-    T_vir_full = jnp.array(T_vir_list + crit_T_vir.tolist())
-    mu_min_weak_full = jnp.array(mu_min_weak_list + mu_min_crit_list)
+    if weak:
+        u_weak_min_out_list = []
+        T_vir_list = []
+        mu_min_weak_list = []
 
-    u_weak_points_low = u_weak_full_min_out[:,0,:]
-    u_weak_points_mid_1 = u_weak_full_min_out[:,1,:]
-    u_weak_points_mid_2 = u_weak_full_min_out[:,2,:]
-    u_weak_points_high = u_weak_full_min_out[:,3,:]
+        for y0, kappa in tqdm(weak_points, desc = 'Computing weak-lensing integrals'):
+            y =jnp.array([y0, 0.])
+            lens_params = jnp.array([kappa])
+            contour_int = amplification_computation_for_interpolation(
+                        T_funcs, 
+                        helper_funcs, 
+                        crit_funcs, 
+                        y, 
+                        lens_params, 
+                        crit_run = False,
+                        N = N,
+                        T0_max = T0_max,
+                        **override_funcs_dict)
+            print(y0, kappa)
+            u_weak_min_out_list.append(contour_int.u_min_out)
+            T_vir_list.append(contour_int.T_vir)
+            mu_min_weak_list.append(contour_int.mu_min)
+            print(y0, kappa)
 
-    interp_weak_low = LinearNDInterpolator(weak_full_points, u_weak_points_low)
-    interp_weak_mid_1 = LinearNDInterpolator(weak_full_points, u_weak_points_mid_1)
-    interp_weak_mid_2 = LinearNDInterpolator(weak_full_points, u_weak_points_mid_2)
-    interp_weak_high = LinearNDInterpolator(weak_full_points, u_weak_points_high)
-    interp_T_vir = LinearNDInterpolator(weak_full_points, T_vir_full)
-    interp_mu_min_weak = LinearNDInterpolator(weak_full_points, mu_min_weak_full)
+        print('Interpolating and saving weak-lensing points...')
 
-    with open(os.path.join(interpolate_dir_path,'interp_weak_low.pkl'), 'wb') as f:
-        pickle.dump(interp_weak_low, f)
+        u_weak_full_min_out = jnp.array(u_weak_min_out_list + u_crit_min_out_list)
+        weak_full_points = jnp.vstack([weak_points, crit_points_in_bound])
+        T_vir_full = jnp.array(T_vir_list + crit_T_vir.tolist())
+        mu_min_weak_full = jnp.array(mu_min_weak_list + mu_min_crit_list)
 
-    with open(os.path.join(interpolate_dir_path,'interp_weak_mid_1.pkl'), 'wb') as f:
-        pickle.dump(interp_weak_mid_1, f)
+        u_weak_points_low = u_weak_full_min_out[:,0,:]
+        u_weak_points_mid_1 = u_weak_full_min_out[:,1,:]
+        u_weak_points_mid_2 = u_weak_full_min_out[:,2,:]
+        u_weak_points_high = u_weak_full_min_out[:,3,:]
 
-    with open(os.path.join(interpolate_dir_path,'interp_weak_mid_2.pkl'), 'wb') as f:
-        pickle.dump(interp_weak_mid_2, f)
+        interp_weak_low = LinearNDInterpolator(weak_full_points, u_weak_points_low)
+        interp_weak_mid_1 = LinearNDInterpolator(weak_full_points, u_weak_points_mid_1)
+        interp_weak_mid_2 = LinearNDInterpolator(weak_full_points, u_weak_points_mid_2)
+        interp_weak_high = LinearNDInterpolator(weak_full_points, u_weak_points_high)
+        interp_T_vir = LinearNDInterpolator(weak_full_points, T_vir_full)
+        interp_mu_min_weak = LinearNDInterpolator(weak_full_points, mu_min_weak_full)
 
-    with open(os.path.join(interpolate_dir_path,'interp_weak_high.pkl'), 'wb') as f:
-        pickle.dump(interp_weak_high, f)
+        with open(os.path.join(interpolate_dir_path,'interp_weak_low.pkl'), 'wb') as f:
+            pickle.dump(interp_weak_low, f)
 
-    with open(os.path.join(interpolate_dir_path,'interp_T_vir.pkl'), 'wb') as f:
-        pickle.dump(interp_T_vir, f)
+        with open(os.path.join(interpolate_dir_path,'interp_weak_mid_1.pkl'), 'wb') as f:
+            pickle.dump(interp_weak_mid_1, f)
 
-    with open(os.path.join(interpolate_dir_path,'interp_mu_min_weak.pkl'), 'wb') as f:
-        pickle.dump(interp_mu_min_weak, f)
+        with open(os.path.join(interpolate_dir_path,'interp_weak_mid_2.pkl'), 'wb') as f:
+            pickle.dump(interp_weak_mid_2, f)
 
-    print(f'Interpolants saved to {interpolate_dir_path}\n Done!')
+        with open(os.path.join(interpolate_dir_path,'interp_weak_high.pkl'), 'wb') as f:
+            pickle.dump(interp_weak_high, f)
+
+        with open(os.path.join(interpolate_dir_path,'interp_T_vir.pkl'), 'wb') as f:
+            pickle.dump(interp_T_vir, f)
+
+        with open(os.path.join(interpolate_dir_path,'interp_mu_min_weak.pkl'), 'wb') as f:
+            pickle.dump(interp_mu_min_weak, f)
+
+        print(f'Interpolants saved to {interpolate_dir_path}')
+
+    print('Done!')
 
 
 def interpolate_im(settings, save_dir = None):

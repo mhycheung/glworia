@@ -21,8 +21,8 @@ def get_interp_dir_name(settings):
     N_grid_im = settings['N_grid_im']
     N_crit_im = settings['N_crit_im']
 
-    interpolate_dir_name = f'{lens_model_name}_y_{y_low:.3f}_{y_high:.3f}_{lens_param_name}_{lp_low:.3f}_{lp_high:.3f}_N_grid_{N_grid}_N_grid_strong_{N_grid_strong}_N_crit_{N_crit}_N_{N}'
-    image_interp_dir_name = f'{lens_model_name}_y_{y_low_im:.3f}_{y_high_im:.3f}_{lens_param_name}_{lp_low_im:.3f}_{lp_high_im:.3f}_N_{N_grid_im}_N_crit_{N_crit_im}'
+    interpolate_dir_name = f'{lens_model_name}_amp_y_{y_low:.3f}_{y_high:.3f}_{lens_param_name}_{lp_low:.3f}_{lp_high:.3f}_N_grid_{N_grid}_N_grid_strong_{N_grid_strong}_N_crit_{N_crit}_N_{N}'
+    image_interp_dir_name = f'{lens_model_name}_im_y_{y_low_im:.3f}_{y_high_im:.3f}_{lens_param_name}_{lp_low_im:.3f}_{lp_high_im:.3f}_N_{N_grid_im}_N_crit_{N_crit_im}'
 
     return interpolate_dir_name, image_interp_dir_name
 
@@ -370,3 +370,7 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_g
 def crit_mask(y, lp, y_interp_func, fac = 0.1):
     y_crit = y_interp_func(lp)
     return np.abs(y - y_crit) < fac*y_crit
+
+def crit_mask_capped(y, lp, y_interp_func, fac = 0.5, cap_low = 0., cap_high = np.inf):
+    y_crit = y_interp_func(lp)
+    return np.abs(y - y_crit) < np.max(np.min((fac*y_crit, cap_high)), cap_low)

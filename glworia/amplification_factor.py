@@ -247,7 +247,8 @@ def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_func
                         y0,
                         lens_params,
                         crit_screen_round_decimal)
-    x_im = x_im_nan_sub(x_im_raw, y0, lens_params)
+    lens_params = jnp.atleast_1d(lens_params)
+    x_im = x_im_nan_sub(x_im_raw, y0, lens_params[0])
     if origin != 'regular':
         x_im = x_im.at[1].set(0.)
     T_images_raw = T_1D(x_im, y0, lens_params)
