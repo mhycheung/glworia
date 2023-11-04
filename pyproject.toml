@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+version = "0.0.0"
+name = "glworia"
+authors = [
+  { name="Mark Ho-Yeuk Cheung", email="hcheung5@jhu.edu" },
+]
+description = "A package for wave-optics lensing calculations"
+readme = "README.md"
+requires-python = ">=3.8,<3.12"
+classifiers = [
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+  "jax>0.3.23",
+  "jaxlib>0.3.23",
+  "matplotlib>3.6.1",
+  "numpy>1.23",
+  "scipy>1.9.3",
+  "tqdm>4.61.1",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/mhycheung/glworia"
+"Bug Tracker" = "https://github.com/mhycheung/glworia/issues"
