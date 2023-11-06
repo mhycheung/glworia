@@ -457,13 +457,17 @@ def interpolate_im(settings, save_dir = None):
 
     y_crit_override = lm.get_y_crit_override()
     x_im_nan_sub = lm.get_x_im_nan_sub(T_funcs['dT_1D'])
+    add_to_strong = lm.get_add_to_strong()
 
     @partial(jnp.vectorize, signature = '(n,2)->(n)')
     def is_strong(point):
         return y_crit_override(lens_param_to_y_crit(point[:,1]), point[:,1]) > point[:,0]
     
     weak_points = grid_points[~is_strong(grid_points)]
-    strong_points = grid_points[is_strong(grid_points)]
+    if add_to_strong is None:
+        strong_points = grid_points[is_strong(grid_points)]
+    else:
+        strong_points = grid_points[is_strong(grid_points) | add_to_strong(grid_points)]
 
     lp_crit_points = jnp.linspace(lp_low, lp_high, num = N_crit_im)
     x_crit_points, y_crit_points = get_crit_curve_1D(lp_crit_points, T_funcs, crit_curve_helper_funcs, x_hi = 100.)
