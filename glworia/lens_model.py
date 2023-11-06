@@ -197,24 +197,25 @@ class CISLens(LensModel):
             return origin
         return origin_type_CIS
     
-    # def get_x_im_nan_sub(self, dT_1D):
-    #     bisection_1D_var_2D = make_bisection_1D_var_2D()
-    #     bisection_1D_cond_fun = make_bisection_1D_cond_fun(1e-13)
-    #     bisection_1D_step_fun = make_bisection_1D_step_fun(dT_1D)
-    #     def x_im_nan_sub_CIS(x_im, y0, lens_params):
-    #         lens_params = jnp.atleast_1d(lens_params)
-    #         x_im = jax.lax.cond(jnp.isnan(x_im[1]) & (lens_params[0] > 0) & (y0 < 1.),
-    #                             lambda x_im: x_im.at[1].set(
-    #                                 bisection_1D_var_2D(dT_1D, 0., 
-    #                                                     -0.1, -1e-14, 
-    #                                                     bisection_1D_cond_fun, 
-    #                                                     bisection_1D_step_fun, 
-    #                                                     y0, lens_params[0])
-    #                             ), 
-    #                             lambda x_im: x_im, 
-    #                             operand = x_im)
-    #         return x_im
-    #     return x_im_nan_sub_CIS
+    def get_x_im_nan_sub(self, dT_1D):
+        bisection_1D_var_2D = make_bisection_1D_var_2D()
+        bisection_1D_cond_fun = make_bisection_1D_cond_fun(1e-13)
+        bisection_1D_step_fun = make_bisection_1D_step_fun(dT_1D)
+        @partial(jnp.vectorize, signature = '(3),(),()->(3)')
+        def x_im_nan_sub_CIS(x_im, y0, lens_params):
+            lens_params = jnp.atleast_1d(lens_params)
+            x_im = jax.lax.cond(jnp.isnan(x_im[1]) & (lens_params[0] > 0) & (y0 < 1.),
+                                lambda x_im: x_im.at[1].set(
+                                    bisection_1D_var_2D(dT_1D, 0., 
+                                                        -0.1, -1e-14, 
+                                                        bisection_1D_cond_fun, 
+                                                        bisection_1D_step_fun, 
+                                                        y0, lens_params[0])
+                                ), 
+                                lambda x_im: x_im, 
+                                operand = x_im)
+            return x_im
+        return x_im_nan_sub_CIS
     
     def get_irregular_crit_points_dict(self):   
         irregular_crit_points_dict = {
