@@ -21,6 +21,7 @@ parser.add_argument('-s', '--save-dir', dest = 'save_dir', type=str, required=Tr
 parser.add_argument('-im', '--image', dest = 'image', action='store_true')
 parser.add_argument('-ss', '--skip-strong', dest = 'strong', action='store_false')
 parser.add_argument('-sw', '--skip-weak', dest = 'weak', action='store_false')
+parser.add_argument('-sa', '--skip-amplification', dest = 'skip_amp', action='store_false')
 args = parser.parse_args()
 
 input_file = args.input_file
@@ -28,12 +29,14 @@ save_dir = args.save_dir
 image = args.image
 strong = args.strong
 weak = args.weak
+skip_amp = args.skip_amp
 
 with open(input_file, 'r') as f:
     input_dict = json.load(f)
 
 if image:
     interpolate_im(input_dict, save_dir)
-interpolate(input_dict, save_dir, strong = strong, weak = weak)
+if not skip_amp:
+    interpolate(input_dict, save_dir, strong = strong, weak = weak)
 
 
