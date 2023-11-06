@@ -168,6 +168,9 @@ priors["azimuth"] = bilby.core.prior.Uniform(
     minimum=0, maximum=2 * np.pi, latex_label="$\\epsilon_a$", boundary="periodic"
 )
 
+if waveform_arguments["waveform_approximant"] in ["IMRPhenomXAS", "IMRPhenomXPHM", "IMRPhenomD"]:
+    for key in ["tilt_1", "tilt_2", "phi_12", "phi_jl"]:
+        priors[key] = injection_parameters[key]
 
 # Perform a check that the prior does not extend to a parameter space longer than the data
 priors.validate_prior(duration, minimum_frequency)
@@ -180,9 +183,9 @@ likelihood = bilby.gw.GravitationalWaveTransient(
     interferometers=ifos,
     waveform_generator=waveform_generator,
     priors=priors,
-    distance_marginalization=True,
+    distance_marginalization=False,
     phase_marginalization=False,
-    time_marginalization=False,
+    time_marginalization=True,
     reference_frame="H1L1",
     time_reference="H1",
 )
