@@ -55,7 +55,7 @@ def load_interpolators(interpolation_root_dir, **kwargs):
 
     interpolate_dir = os.path.join(interpolation_root_dir, interpolate_dir_name)
     image_interp_dir = os.path.join(interpolation_root_dir, image_interp_dir_name)
-    # crit_interp_dir = os.path.join(interpolation_root_dir, 'crit_funcs')
+    crit_interp_dir = os.path.join(interpolation_root_dir, 'crit_funcs')
 
     with open(os.path.join(interpolate_dir, 'interp_strong_low.pkl'), 'rb') as f:
         interp_strong_low = pickle.load(f)
@@ -105,12 +105,12 @@ def load_interpolators(interpolation_root_dir, **kwargs):
     with open(os.path.join(image_interp_dir, 'strong_full_min_mu.pkl'), 'rb') as f:
         interp_strong_full_min_mu = pickle.load(f)
 
-    # crit_func_file_name = f"{lens_model_name}_crit_funcs_{crit_param_low:.3f}_{crit_param_high:.3f}.pkl"
+    crit_func_file_name = f"{lens_model_name}_crit_funcs_{crit_param_low:.3f}_{crit_param_high:.3f}.pkl"
 
-    # with open(os.path.join(crit_interp_dir, crit_func_file_name), 'rb') as f:
-    #     crit_funcs = pickle.load(f)
+    with open(os.path.join(crit_interp_dir, crit_func_file_name), 'rb') as f:
+        crit_funcs = pickle.load(f)
 
-    # lens_param_to_y_crit = crit_funcs['lens_param_to_y_crit']
+    lens_param_to_y_crit = crit_funcs['lens_param_to_y_crit']
 
     interpolators = {
         'interp_strong_low': interp_strong_low,
@@ -129,7 +129,7 @@ def load_interpolators(interpolation_root_dir, **kwargs):
         'interp_strong_full_sad_mu': interp_strong_full_sad_mu,
         'interp_strong_full_max_mu': interp_strong_full_max_mu,
         'interp_strong_full_min_mu': interp_strong_full_min_mu,
-        # 'lens_param_to_y_crit': lens_param_to_y_crit
+        'lens_param_to_y_crit': lens_param_to_y_crit
     }
 
     return interpolators
