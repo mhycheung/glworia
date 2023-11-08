@@ -189,13 +189,18 @@ def x_im_nan_sub_default(x_im, y0, lens_params):
 def origin_type_default(lens_params):
     return 'regular'
 
+@partial(jnp.vectorize, signature = '(n,2)->(n)')
+def add_to_strong_default(point):
+    return False
+
 def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_funcs, y, lens_params, **kwargs):
     
     settings = {'crit_bisect_x_low': -20, 'crit_bisect_x_high': 20, 'crit_bisect_x_num': 1000,
                 'crit_screen_round_decimal': 7, 'T0_max': 1000, 
                 'crit_run': False, 'N': 100, 'return_all': False, 'singular': False,
                 'origin_type': origin_type_default, 'y_crit_override': y_crit_override_default,
-                'x_im_nan_sub': x_im_nan_sub_default, 'T_vir_low_bound' : 1e-2}
+                'x_im_nan_sub': x_im_nan_sub_default, 'add_to_strong': add_to_strong_default,
+                'T_vir_low_bound' : 1e-2}
     settings.update(kwargs)
 
     return_all = settings['return_all']
@@ -237,6 +242,7 @@ def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_func
 
     y_crit_override = settings['y_crit_override']
     x_im_nan_sub = settings['x_im_nan_sub']
+    add_to_strong = settings['add_to_strong']
 
     y0 = y[0]
 
@@ -262,7 +268,7 @@ def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_func
     T_vir = T_1D(x_crit_val, y0, lens_params) - T_min
 
     y_crit_val_overriden = y_crit_override(y_crit_val, lens_params)
-    strong_lensing = y0 < y_crit_val_overriden
+    strong_lensing = (y0 < y_crit_val_overriden) or add_to_strong(jnp.array([[y0, lens_params[0]]]))[0]
     overrode = (y_crit_val_overriden != y_crit_val)
 
     if crit_run:

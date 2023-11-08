@@ -36,7 +36,7 @@ class LensModel:
         return None
     
     def get_add_to_strong(self):
-        return None
+        return add_to_strong_default
     
     def get_override_funcs_dict(self, dT_1D):
         return {'y_crit_override': self.get_y_crit_override(),
@@ -152,9 +152,9 @@ class gSISLens(LensModel):
     
     def get_add_to_strong(self):
         @partial(jnp.vectorize, signature = '(n,2)->(n)')
-        def is_crit(point):
+        def add_to_strong_gSIS(point):
             return jnp.abs(point[:,1] - 1.) < 1e-15
-        return is_crit
+        return add_to_strong_gSIS
         
 class CISLens(LensModel):
 
