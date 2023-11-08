@@ -191,7 +191,7 @@ def origin_type_default(lens_params):
 
 @partial(jnp.vectorize, signature = '(n,2)->(n)')
 def add_to_strong_default(point):
-    return False
+    return jnp.full(point.shape[0], False)
 
 def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_funcs, y, lens_params, **kwargs):
     
