@@ -137,6 +137,10 @@ class gSISLens(LensModel):
                                 ), 
                                 lambda x_im: x_im, 
                                 operand = x_im)
+            x_im = jax.lax.cond(jnp.isnan(x_im[0]) & (jnp.abs(lens_params[0] - 1.) < 1e-15) & (y0 > 1.), 
+                                lambda x_im: x_im.at[0].set(y0 - 1.), 
+                                lambda x_im: x_im, 
+                                operand = x_im)
             return x_im
 
         return x_im_nan_sub_gSIS
