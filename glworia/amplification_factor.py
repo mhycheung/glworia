@@ -268,10 +268,10 @@ def amplification_computation_for_interpolation(T_funcs, helper_funcs, crit_func
     T_vir = T_1D(x_crit_val, y0, lens_params) - T_min
 
     y_crit_val_overriden = y_crit_override(y_crit_val, lens_params)
-    strong_lensing = (y0 < y_crit_val_overriden) or add_to_strong(jnp.array([[y0, lens_params[0]]]))[0]
+    strong_lensing = (y0 < y_crit_val_overriden) 
     overrode = (y_crit_val_overriden != y_crit_val)
 
-    if crit_run:
+    if crit_run or add_to_strong(jnp.array([[y0, lens_params[0]]]))[0]:
         T_images = T_images.at[0:2].set(T_vir)
         x_im = x_im.at[0:2].set(x_crit_val)
         multi_image = True
