@@ -3,6 +3,7 @@ import jax.numpy as jnp
 from jax import vmap, grad, jit
 from functools import partial
 from glworia.utils import *
+from jax.experimental.host_callback import call
 
 def newton_1D_cond_fun_full(x_iter, tol):
     r = x_iter[1]
@@ -110,9 +111,11 @@ def get_crit_points_1D(x_init_arr, cond_fun, step_fun, y, lens_params, round_dec
     args = (y, jnp.atleast_1d(lens_params))
     crit_points_full = (newton_1D(x_init_arr, cond_fun, step_fun, args))
     unique, count = jnp.unique(jnp.round(crit_points_full, round_decimal), return_counts = True, size = 20, fill_value = jnp.nan)
-    third_best_count = -jnp.sort(-count)[2]
-    unique_top_three = jnp.where(count >= third_best_count, unique, jnp.nan)
-    crit_points_screened = jnp.unique(unique_top_three, size = 3, fill_value = jnp.nan)
+    indices_sorted = jnp.argsort(-count)
+    # uniques_sorted = unique[indices_sorted]    
+    # third_best_count = -jnp.sort(-count)[2]
+    crit_points_screened = unique[indices_sorted[:3]]
+    # crit_points_screened = jnp.unique(unique_top_three, size = 3, fill_value = jnp.nan)
     crit_points_screened = nan_to_const(crit_points_screened, 0.)
     crit_points_screened = jnp.sort(crit_points_screened)
     # crit_sad_max = -jnp.sort(-crit_points_screened[:2])
