@@ -10,7 +10,8 @@ class Uniform2DMaskDist(BaseJointPriorDist):
             self,
             names,
             bounds,
-            crit_mask_settings = None
+            crit_mask_settings = None,
+            mask_boxes = [],
     ):
         super(Uniform2DMaskDist, self).__init__(names=names, bounds=bounds)
         self.names = names
@@ -25,6 +26,7 @@ class Uniform2DMaskDist(BaseJointPriorDist):
             self.cap_low = self.crit_mask_settings['cap_low']
         else:
             self.crit_mask_settings = None
+        self.mask_boxes = mask_boxes
 
     def _rescale(self, samp, **kwargs):
         return self.bounds_arr[:, 0] + (self.bounds_arr[:, 1] - self.bounds_arr[:, 0]) * samp
@@ -54,6 +56,8 @@ class Uniform2DMaskDist(BaseJointPriorDist):
         lp = samp[1]
         y_crit = self.lens_param_to_y_crit(lp)
         masked = np.abs(y - y_crit) < np.max((np.min((self.fac*y_crit, self.cap_high)), self.cap_low))
+        for box in self.mask_boxes:
+            masked = masked or (box[0][0] < y < box[0][1] and box[1][0] < lp < box[1][1])
         return masked
 
 class Uniform2DMask(JointPrior):
