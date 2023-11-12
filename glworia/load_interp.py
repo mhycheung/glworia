@@ -353,13 +353,13 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_g
     F_list = [Fw_low, Fw_high]
     w_low_trans = w_arr_low[0]
     partitions = np.array([w_low_trans, w_trans_1, w_trans_2])
-    sigs = partitions/10
+    sigs = np.maximum(partitions/10, 1e-4)
 
     if return_geom:
 
         F_interp, F_geometric = interp_partitions(w_interp, w_list, F_list, partitions, sigs, T_im, mu_im, 
                                  return_geom = return_geom)
-        return F_interp, F_geometric, partitions, T_im, mu_im, u_interp_low, u_interp_mid_1, u_interp_mid_2, u_interp_high, u_interp_sad_max, w_arr_high, Fw_high, w_arr_low, Fw_low
+        return F_interp, F_geometric, partitions, T_im_hi, T_im, mu_im, u_interp_low, u_interp_mid_1, u_interp_mid_2, u_interp_high, u_interp_sad_max, w_arr_high, Fw_high, w_arr_low, Fw_low
     
     else:
             
