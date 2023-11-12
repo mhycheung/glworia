@@ -42,9 +42,9 @@ def make_grid_points(settings, functions_dict = None, mid_point = False):
     param_arr = jnp.linspace(lp_low, lp_high, crit_lp_N)
 
     lm = get_lens_model(lens_model_name)
+    Psi = lm.get_Psi()
 
     if functions_dict is None:
-        Psi = lm.get_Psi()
         T_funcs, helper_funcs = amplification_computation_prep(Psi)
         crit_curve_helper_funcs = make_crit_curve_helper_func(T_funcs)
         crit_funcs = crtical_curve_interpolants(param_arr, T_funcs, crit_curve_helper_funcs)
@@ -137,7 +137,7 @@ def make_grid_points(settings, functions_dict = None, mid_point = False):
 
     crit_image_x = jnp.vstack([x_crit_points_in_bound, x_crit_points_in_bound, crit_min_x.ravel()]).T
     T_1D_vec = T_funcs['T_1D_vec']
-    crit_T_vir = T_1D_vec(x_crit_points_in_bound, crit_points_in_bound[:,0], crit_points_in_bound[:,1], Psi_NFW)
+    crit_T_vir = T_1D_vec(x_crit_points_in_bound, crit_points_in_bound[:,0], crit_points_in_bound[:,1], Psi)
     crit_sad_x, crit_max_x, crit_min_x = jnp.hsplit(crit_image_x, crit_image_x.shape[1])
 
     return weak_points, strong_points, crit_points_in_bound, crit_T_vir, lens_param_to_y_crit
@@ -303,6 +303,9 @@ def interpolate(settings, save_dir = None, strong = True, weak = True):
         T_vir_list = []
         mu_min_weak_list = []
 
+        override_funcs_dict_weak = override_funcs_dict.copy()
+        override_funcs_dict_weak['add_to_strong'] = add_to_strong_default
+
         for y0, kappa in tqdm(weak_points, desc = 'Computing weak-lensing integrals'):
             y =jnp.array([y0, 0.])
             lens_params = jnp.array([kappa])
@@ -315,7 +318,7 @@ def interpolate(settings, save_dir = None, strong = True, weak = True):
                         crit_run = False,
                         N = N,
                         T0_max = T0_max,
-                        **override_funcs_dict)
+                        **override_funcs_dict_weak)
             print(y0, kappa)
             u_weak_min_out_list.append(contour_int.u_min_out)
             T_vir_list.append(contour_int.T_vir)
@@ -554,11 +557,12 @@ def interpolate_im(settings, save_dir = None):
     strong_full_max_T = T_1D_vec(nan_to_const(strong_full_max_x, const = 0), strong_points_full[:,0], strong_points_full[:,1], Psi_1D)
     strong_full_min_T = T_1D_vec(strong_full_min_x, strong_points_full[:,0], strong_points_full[:,1], Psi_1D)
 
-    weak_points_nan = jnp.ones(len(weak_points))*jnp.nan
+    weak_points_for_T_adj_nan = weak_points[~add_to_strong(weak_points)]
+    weak_points_nan = jnp.ones(len(weak_points_for_T_adj_nan))*jnp.nan
 
     interp_strong_full_sad_T_adj = LinearNDInterpolator(
         jnp.vstack([strong_points_full, 
-                    weak_points
+                    weak_points_for_T_adj_nan
                     ]),
         jnp.concatenate((strong_full_sad_T - strong_full_min_T, 
                         weak_points_nan
