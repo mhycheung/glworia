@@ -111,7 +111,9 @@ def get_crit_points_1D(x_init_arr, cond_fun, step_fun, y, lens_params, round_dec
     args = (y, jnp.atleast_1d(lens_params))
     crit_points_full = (newton_1D(x_init_arr, cond_fun, step_fun, args))
     unique, count = jnp.unique(jnp.round(crit_points_full, round_decimal), return_counts = True, size = 20, fill_value = jnp.nan)
-    indices_sorted = jnp.argsort(-count)
+    count_adj = jnp.where(jnp.abs(unique) > 0.1, 100*count, count)
+    # print(unique, count, count_adj)
+    indices_sorted = jnp.argsort(-count_adj)
     # uniques_sorted = unique[indices_sorted]    
     # third_best_count = -jnp.sort(-count)[2]
     crit_points_screened = unique[indices_sorted[:3]]
@@ -122,19 +124,19 @@ def get_crit_points_1D(x_init_arr, cond_fun, step_fun, y, lens_params, round_dec
     # crit_points_screened = crit_points_screened.at[:2].set(crit_sad_max)
     return const_to_nan(crit_points_screened, 0.)
 
-@partial(jnp.vectorize, excluded={0,1,2,5}, signature = '(),()->(3)')
-# @partial(jit, static_argnums = (1, 2, 5))
-def get_crit_points_vec(x_init_arr, cond_fun, step_fun, y, lens_params, round_decimal = 8):
-    args = (y, jnp.atleast_1d(lens_params))
-    crit_points_full = (newton_1D(x_init_arr, cond_fun, step_fun, args))
-    # crit_points_screened = -jnp.unique(jnp.round(crit_points_full, round_decimal), size = 3, fill_value = 0.)
-    unique, count = jnp.unique(jnp.round(crit_points_full, round_decimal), return_counts = True, size = 20, fill_value = jnp.nan)
-    third_best_count = -jnp.sort(-count)[2]
-    unique_top_three = jnp.where(count >= third_best_count, unique, jnp.nan)
-    crit_points_screened = jnp.unique(unique_top_three, size = 3, fill_value = jnp.nan)
-    crit_points_screened = nan_to_const(crit_points_screened, 0.)
-    crit_points_screened = jnp.sort(crit_points_screened)
-    return const_to_nan(crit_points_screened, 0.)
+# @partial(jnp.vectorize, excluded={0,1,2,5}, signature = '(),()->(3)')
+# # @partial(jit, static_argnums = (1, 2, 5))
+# def get_crit_points_vec(x_init_arr, cond_fun, step_fun, y, lens_params, round_decimal = 8):
+#     args = (y, jnp.atleast_1d(lens_params))
+#     crit_points_full = (newton_1D(x_init_arr, cond_fun, step_fun, args))
+#     # crit_points_screened = -jnp.unique(jnp.round(crit_points_full, round_decimal), size = 3, fill_value = 0.)
+#     unique, count = jnp.unique(jnp.round(crit_points_full, round_decimal), return_counts = True, size = 20, fill_value = jnp.nan)
+#     third_best_count = -jnp.sort(-count)[2]
+#     unique_top_three = jnp.where(count >= third_best_count, unique, jnp.nan)
+#     crit_points_screened = jnp.unique(unique_top_three, size = 3, fill_value = jnp.nan)
+#     crit_points_screened = nan_to_const(crit_points_screened, 0.)
+#     crit_points_screened = jnp.sort(crit_points_screened)
+#     return const_to_nan(crit_points_screened, 0.)
 
 def make_crit_curve_helper_func(T_funcs, crit_bisect_tol = 1e-9):
     ddPsi_1D = T_funcs['ddPsi_1D']
