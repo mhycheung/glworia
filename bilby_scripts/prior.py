@@ -29,27 +29,41 @@ class Uniform2DMaskDist(BaseJointPriorDist):
         self.mask_boxes = mask_boxes
 
     def _rescale(self, samp, **kwargs):
-        return self.bounds_arr[:, 0] + (self.bounds_arr[:, 1] - self.bounds_arr[:, 0]) * samp
+        scaled_samps = self.bounds_arr[:, 0] + (self.bounds_arr[:, 1] - self.bounds_arr[:, 0]) * samp
+        if self.crit_mask_settings is not None:
+            for i in range(scaled_samps.shape[0]):
+                samp_i = scaled_samps[i, :]
+                masked = self.check_mask(samp_i)
+                while masked:
+                    samp_new = random.rng.uniform(0, 1, 2) * (self.bounds_arr[:, 1] - self.bounds_arr[:, 0]) + self.bounds_arr[:, 0]
+                    masked = self.check_mask(samp_new)
+                    scaled_samps[i, :] = samp_new
+        return scaled_samps
     
     def _sample(self, size, **kwargs):
         
         samps = np.zeros((size, 2))
         for i in range(size):
-            masked = True
-            while masked:
-                vals = random.rng.uniform(0, 1, 2)
-                samp = np.atleast_1d(self.rescale(vals))
+            # masked = True
+            # while masked:
+            vals = random.rng.uniform(0, 1, 2)
+            samp = np.atleast_1d(self.rescale(vals))
 
-                if self.crit_mask_settings is not None:
-                    masked = self.check_mask(samp)
-                else:
-                    masked = False
-                samps[i, :] = samp
+                # if self.crit_mask_settings is not None:
+                #     masked = self.check_mask(samp)
+                # else:
+                #     masked = False
+            samps[i, :] = samp
     
         return samps
     
     def _ln_prob(self, samp, lnprob, outbounds):
-        return np.logaddexp(lnprob, 0)
+        lnprob = np.logaddexp(lnprob, 0)
+        lnprob[outbounds] = -np.inf
+        for i in range(samp.shape[0]):
+            if self.check_mask(samp[i, :]):
+                lnprob[i] = -np.inf
+        return lnprob
 
     def check_mask(self, samp):
         y = samp[0]
