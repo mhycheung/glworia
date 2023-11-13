@@ -1,6 +1,7 @@
 import numpy as np
 import pickle
 import os
+import warnings
 
 def get_interp_dir_name(settings):
 
@@ -313,6 +314,8 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_g
     u_min_out_interp_full = np.concatenate([u_interp_low, u_interp_mid_1, u_interp_mid_2, u_interp_high])
 
     T_im_hi = np.nanmax((T_max_interp, T_sad_interp))
+    if np.isnan(T_im_hi):
+        warnings.warn('T_im_hi is nan: y = {}, kappa = {}'.format(y_interp, kappa_interp), RuntimeWarning)
     t_fft_short_max = T_im_hi*20
     t_fft_long_max = np.min((T_im_hi*2000, 1000))
     t_fft_short = np.linspace(0, t_fft_short_max, 2**16)
