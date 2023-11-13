@@ -129,6 +129,10 @@ priors["MLz"] = MLz_prior(
 
 crit_mask_settings = prior_settings['crit_mask_settings']
 crit_mask_settings.update(lens_param_to_y_crit = interpolators['lens_param_to_y_crit'])
+if 'mask_boxes' in prior_settings:
+    mask_boxes = prior_settings['mask_boxes']
+else:
+    mask_boxes = []
 
 ylp_masked = Uniform2DMaskDist(
     names = ['y', 'lp'],
@@ -136,7 +140,8 @@ ylp_masked = Uniform2DMaskDist(
         'y': [prior_settings['y_min'], prior_settings['y_max']],
         'lp': [prior_settings['lp_min'], prior_settings['lp_max']]
     },
-    crit_mask_settings = crit_mask_settings)
+    crit_mask_settings = crit_mask_settings,
+    mask_boxes = mask_boxes)
 
 priors['y'] = Uniform2DMask(ylp_masked, name = 'y', latex_label = '$y$', unit = None)
 priors['lp'] = Uniform2DMask(ylp_masked, name = 'lp', latex_label = lp_latex, unit = None)
