@@ -5,11 +5,11 @@ import jax.numpy as jnp
 from jax.config import config
 config.update("jax_enable_x64", True)
 
-from glworia.lens_functions import *
-from glworia.utils import *
-from glworia.root import *
-from glworia.contour import *
-from glworia.frequency_domain import *
+from .lens_functions import *
+from .utils import *
+from .root import *
+from .contour import *
+from .frequency_domain import *
 
 from scipy.interpolate import interp1d
 

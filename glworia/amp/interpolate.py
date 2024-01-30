@@ -1,10 +1,10 @@
-from glworia.amplification_factor import *
-from glworia.lens_functions import *
-from glworia.contour import *
-from glworia.utils import *
-from glworia.root import *
-from glworia.plot import *
-from glworia.lens_model import *
+from .amplification_factor import *
+from .lens_functions import *
+from .contour import *
+from .utils import *
+from .root import *
+from .plot import *
+from .lens_model import *
 
 from jax.config import config
 config.update("jax_enable_x64", True)
