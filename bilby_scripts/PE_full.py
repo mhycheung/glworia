@@ -68,7 +68,7 @@ os.makedirs(outdir, exist_ok=True)
 bilby.core.utils.setup_logger(outdir=outdir, label=label)
 
 # Set up a random seed for result reproducibility.  This is optional!
-np.random.seed(misc['seed'])
+bilby.core.utils.random.seed(misc['seed'])
 
 interpolators = load_interpolators(interpolator_dir, **interpolator_settings)
 F_interp_loaded = lambda w, y, kappa: F_interp(w, y, kappa, interpolators, interpolator_settings)
@@ -90,11 +90,18 @@ waveform_generator = bilby.gw.WaveformGenerator(
 # (LIGO-Hanford (H1), LIGO-Livingston (L1). These default to their design
 # sensitivity
 ifos = bilby.gw.detector.InterferometerList(["H1", "L1"])
-ifos.set_strain_data_from_power_spectral_densities(
-    sampling_frequency=sampling_frequency,
-    duration=duration,
-    start_time=injection_parameters["geocent_time"] - 2,
-)
+if misc['zero_noise']:
+    ifos.set_strain_data_from_zero_noise(
+        sampling_frequency=sampling_frequency,
+        duration=duration,
+        start_time=injection_parameters["geocent_time"] - 2,
+    )
+else:
+    ifos.set_strain_data_from_power_spectral_densities(
+        sampling_frequency=sampling_frequency,
+        duration=duration,
+        start_time=injection_parameters["geocent_time"] - 2,
+    )
 ifos.inject_signal(
     waveform_generator=waveform_generator, parameters=injection_parameters
 )
@@ -173,7 +180,7 @@ priors["azimuth"] = bilby.core.prior.Uniform(
     minimum=0, maximum=2 * np.pi, latex_label="$\\epsilon_a$", boundary="periodic"
 )
 
-if waveform_arguments["waveform_approximant"] in ["IMRPhenomXAS", "IMRPhenomXPHM", "IMRPhenomD"]:
+if waveform_arguments["waveform_approximant"] in ["IMRPhenomXAS", "IMRPhenomXPHM", "IMRPhenomXHM", "IMRPhenomD"]:
     for key in ["tilt_1", "tilt_2", "phi_12", "phi_jl"]:
         priors[key] = injection_parameters[key]
 

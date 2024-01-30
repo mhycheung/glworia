@@ -68,7 +68,7 @@ os.makedirs(outdir, exist_ok=True)
 bilby.core.utils.setup_logger(outdir=outdir, label=label)
 
 # Set up a random seed for result reproducibility.  This is optional!
-np.random.seed(misc['seed'])
+bilby.core.utils.random.seed(misc['seed'])
 
 interpolators = load_interpolators(interpolator_dir, **interpolator_settings)
 F_interp_loaded = lambda w, y, kappa: F_interp(w, y, kappa, interpolators, interpolator_settings)
@@ -76,13 +76,18 @@ F_interp_loaded = lambda w, y, kappa: F_interp(w, y, kappa, interpolators, inter
 # Fixed arguments passed into the source model
 waveform_arguments.update(F_interp = F_interp_loaded)
 
+if prior_settings['reparameterize']:
+    conversion_func = make_conversion_y_pow_alpha_MLz(prior_settings['alpha'])
+else:
+    conversion_func = bilby.gw.conversion.convert_to_lal_binary_black_hole_parameters
+
 # Create the waveform_generator using a LAL BinaryBlackHole source function
 # the generator will convert all the parameters
 waveform_generator = bilby.gw.WaveformGenerator(
     duration=duration,
     sampling_frequency=sampling_frequency,
     frequency_domain_source_model=lal_binary_black_hole_lensed,
-    parameter_conversion=bilby.gw.conversion.convert_to_lal_binary_black_hole_parameters,
+    parameter_conversion=conversion_func,
     waveform_arguments=waveform_arguments,
 )
 
@@ -90,11 +95,18 @@ waveform_generator = bilby.gw.WaveformGenerator(
 # (LIGO-Hanford (H1), LIGO-Livingston (L1). These default to their design
 # sensitivity
 ifos = bilby.gw.detector.InterferometerList(["H1", "L1"])
-ifos.set_strain_data_from_power_spectral_densities(
-    sampling_frequency=sampling_frequency,
-    duration=duration,
-    start_time=injection_parameters["geocent_time"] - 2,
-)
+if misc['zero_noise']:
+    ifos.set_strain_data_from_zero_noise(
+        sampling_frequency=sampling_frequency,
+        duration=duration,
+        start_time=injection_parameters["geocent_time"] - 2,
+    )
+else:
+    ifos.set_strain_data_from_power_spectral_densities(
+        sampling_frequency=sampling_frequency,
+        duration=duration,
+        start_time=injection_parameters["geocent_time"] - 2,
+    )
 ifos.inject_signal(
     waveform_generator=waveform_generator, parameters=injection_parameters
 )
@@ -112,20 +124,38 @@ ifos.inject_signal(
 
 priors = bilby.gw.prior.BBHPriorDict()
 
-if prior_settings['MLz_prior_type'] == 'uniform':
-    MLz_prior = bilby.core.prior.Uniform
-elif prior_settings['MLz_prior_type'] == 'loguniform':
-    MLz_prior = bilby.core.prior.LogUniform
-else:
-    raise ValueError('MLz_prior_type must be either uniform or loguniform')
+if prior_settings['reparameterize']:
+    if prior_settings['y_to_alpha_MLz_prior_type'] == 'uniform':
+        y_to_alpha_MLz_prior = bilby.core.prior.Uniform
+    elif prior_settings['y_to_alpha_MLz_prior_type'] == 'loguniform':
+        y_to_alpha_MLz_prior = bilby.core.prior.LogUniform
+    else:
+        raise ValueError('y_to_alpha_MLz_prior_type must be either uniform or loguniform')
+    
+    priors['y_to_alpha_MLz'] = y_to_alpha_MLz_prior(
+        minimum=prior_settings['y_to_alpha_MLz_min'],
+        maximum=prior_settings['y_max']**prior_settings['alpha'] * prior_settings['MLz_max'],
+        name="y_to_alpha_MLz",
+        latex_label=r"$y^\alpha M_{Lz}$",
+        unit="$M_\odot$",
+    )
+    priors["MLz"] = bilby.core.prior.Constraint(minimum = prior_settings['MLz_min'], maximum = prior_settings['MLz_max'], name = "MLz")
 
-priors["MLz"] = MLz_prior(
-    minimum=prior_settings['MLz_min'],
-    maximum=prior_settings['MLz_max'],
-    name="MLz",
-    latex_label="$M_{Lz}$",
-    unit="$M_\odot$",
-)
+else:
+    if prior_settings['MLz_prior_type'] == 'uniform':
+        MLz_prior = bilby.core.prior.Uniform
+    elif prior_settings['MLz_prior_type'] == 'loguniform':
+        MLz_prior = bilby.core.prior.LogUniform
+    else:
+        raise ValueError('MLz_prior_type must be either uniform or loguniform')
+
+    priors["MLz"] = MLz_prior(
+        minimum=prior_settings['MLz_min'],
+        maximum=prior_settings['MLz_max'],
+        name="MLz",
+        latex_label="$M_{Lz}$",
+        unit="$M_\odot$",
+    )
 
 crit_mask_settings = prior_settings['crit_mask_settings']
 crit_mask_settings.update(lens_param_to_y_crit = interpolators['lens_param_to_y_crit'])
@@ -164,7 +194,7 @@ if 'luminosity_distance_prior_type' in prior_settings:
         unit="Mpc",
     )
 
-for key in [
+fix_keys = [
     "a_1",
     "a_2",
     "tilt_1",
@@ -176,7 +206,9 @@ for key in [
     "dec",
     "geocent_time",
     "phase",
-]:
+]
+
+for key in fix_keys:
     priors[key] = injection_parameters[key]
 
 # Perform a check that the prior does not extend to a parameter space longer than the data
@@ -198,6 +230,9 @@ result = bilby.run_sampler(
     label=label,
     **sampler_settings,
 )
+
+# Plot the inferred waveform superposed on the actual data.
+result.plot_waveform_posterior(n_samples=1000)
 
 # Make a corner plot.
 result.plot_corner()

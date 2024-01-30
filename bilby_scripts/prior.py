@@ -3,6 +3,8 @@ from bilby.core.prior.joint import BaseJointPriorDist, JointPrior, JointPriorDis
 from bilby.core.utils import random
 import numpy as np
 from glworia.load_interp import load_interpolators
+import json
+from bilby.core.utils.io import *
 
 class Uniform2DMaskDist(BaseJointPriorDist):
 
@@ -78,8 +80,89 @@ class Uniform2DMask(JointPrior):
     def __init__(self, dist, name = None, latex_label = None, unit = None):
         if not isinstance(dist, Uniform2DMaskDist):
             raise JointPriorDistError(
-                "dist object must be instance of MultivariateGaussianDist"
+                "dist object must be instance of Uniform2DMaskDist"
             )
         super(Uniform2DMask, self).__init__(
             dist=dist, name=name, latex_label=latex_label, unit=unit
         )
+
+    def to_json(self):
+        return json.dumps(self, cls = BilbyJsonEncoderLens)
+    
+def make_conversion_y_pow_alpha_MLz(alpha):
+    return lambda parameters: convert_to_lal_BBH_and_y_pow_alpha_MLz(parameters, alpha)
+
+def y_pow_alpha_MLz_conversion(parameters, added_keys, alpha):
+    converted_parameters = parameters.copy()
+    converted_parameters['MLz'] = parameters['y_to_alpha_MLz']/(parameters['y']**alpha)
+    added_keys.append('MLz')
+    return converted_parameters, added_keys
+
+def convert_to_lal_BBH_and_y_pow_alpha_MLz(parameters, alpha):
+    parameters, added_keys = bilby.gw.conversion.convert_to_lal_binary_black_hole_parameters(parameters)
+    parameters, added_keys = y_pow_alpha_MLz_conversion(parameters, added_keys, alpha)
+    return parameters, added_keys
+
+# allow for dumping Uniform2DMaskDist to json
+class BilbyJsonEncoderLens(json.JSONEncoder):
+    def default(self, obj):
+        from bilby.core.prior import MultivariateGaussianDist, Prior, PriorDict
+        from bilby.gw.prior import HealPixMapPriorDist
+        from bilby.bilby_mcmc.proposals import ProposalCycle
+        from scipy.interpolate._interpolate import interp1d
+
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, PriorDict):
+            return {"__prior_dict__": True, "content": obj._get_json_dict()}
+        if isinstance(obj, (MultivariateGaussianDist, HealPixMapPriorDist, Prior, Uniform2DMaskDist)):
+            return {
+                "__prior__": True,
+                "__module__": obj.__module__,
+                "__name__": obj.__class__.__name__,
+                "kwargs": dict(obj.get_instantiation_dict()),
+            }
+        if isinstance(obj, interp1d):
+            return {"__interp1d__": True, "x": obj.x.tolist(), "y": obj.y.tolist()}
+        if isinstance(obj, ProposalCycle):
+            return str(obj)
+        try:
+            from astropy import cosmology as cosmo, units
+
+            if isinstance(obj, cosmo.FLRW):
+                return encode_astropy_cosmology(obj)
+            if isinstance(obj, units.Quantity):
+                return encode_astropy_quantity(obj)
+            if isinstance(obj, units.PrefixUnit):
+                return str(obj)
+        except ImportError:
+            logger.debug("Cannot import astropy, cannot write cosmological priors")
+        if isinstance(obj, np.ndarray):
+            return {"__array__": True, "content": obj.tolist()}
+        if isinstance(obj, complex):
+            return {"__complex__": True, "real": obj.real, "imag": obj.imag}
+        if isinstance(obj, pd.DataFrame):
+            return {"__dataframe__": True, "content": obj.to_dict(orient="list")}
+        if isinstance(obj, pd.Series):
+            return {"__series__": True, "content": obj.to_dict()}
+        if inspect.isfunction(obj):
+            return {
+                "__function__": True,
+                "__module__": obj.__module__,
+                "__name__": obj.__name__,
+            }
+        if inspect.isclass(obj):
+            return {
+                "__class__": True,
+                "__module__": obj.__module__,
+                "__name__": obj.__name__,
+            }
+        if isinstance(obj, (timedelta)):
+            return {
+                "__timedelta__": True,
+                "__total_seconds__": obj.total_seconds()
+            }
+            return obj.isoformat()
+        return json.JSONEncoder.default(self, obj)
