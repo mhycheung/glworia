@@ -2,7 +2,7 @@ import jax
 import jax.numpy as jnp
 from jax import vmap, grad, jit
 from functools import partial
-from glworia.utils import *
+from .utils import *
 from jax.experimental.host_callback import call
 
 def newton_1D_cond_fun_full(x_iter, tol):

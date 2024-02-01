@@ -2,7 +2,7 @@ import bilby
 from bilby.core.prior.joint import BaseJointPriorDist, JointPrior, JointPriorDistError
 from bilby.core.utils import random
 import numpy as np
-from glworia.load_interp import load_interpolators
+from ..amp.load_interp import load_interpolators
 import json
 from bilby.core.utils.io import *
 
