@@ -8,6 +8,8 @@ theme: material
 
 nav:
   - Home: index.md
+  - Examples:
+    - Computing the amplification factor: examples/example_amplification_minimal.ipynb
   - API:
     - glworia.amp.amplification_factor: api/amp/amplification_factor.md
 
