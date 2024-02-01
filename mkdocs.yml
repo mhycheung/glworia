@@ -1,0 +1,38 @@
+site_name: glworia
+site_url: "https://mhycheung.github.io/jaxqualin/"
+site_author: Mark Ho-Yeuk Cheung
+repo_url: https://github.com/mhycheung/glworia
+repo_name: GitHub
+
+theme: material
+
+nav:
+  - Home: index.md
+  - Examples:
+    - Computing the amplification factor: examples/example_amplification_minimal.ipynb
+  - API:
+    - glworia.amp.amplification_factor: api/amp/amplification_factor.md
+
+plugins:
+  - search
+  - mkdocs-jupyter:
+      ignore_h1_titles: True
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_submodules: true
+            show_source: false
+            heading_level: 4
+
+markdown_extensions:
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.snippets
+  - attr_list
+  - md_in_html
+
+extra_javascript:
+  - docs/javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
