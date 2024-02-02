@@ -82,6 +82,12 @@ def amplification_computation_prep(Psi: Callable, **kwargs: Dict[str, Any]) -> T
     Parameters:
         Psi: The Fermat potential of the lens model.
 
+    Keyword Args:
+        h (float): The step size for numerical differentiation.
+        newt_tol (float): The tolerance for the Newton's method.
+        newt_max_iter (int): The maximum number of iterations for the Newton's method.
+        bisect_tol (float): The tolerance for the bisection method.
+
     Returns:
         T_funcs: A dictionary of functions needed for computing the amplification factor.
         helper_funcs: A dictionary of helper functions needed for computing the amplification factor.
