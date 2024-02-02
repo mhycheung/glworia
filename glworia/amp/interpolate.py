@@ -180,15 +180,15 @@ def interpolate(settings, save_dir = None, strong = True, weak = True):
     N = settings['N']
     lp_name = settings['lens_param_name']
 
-    crit_bisect_x_low = settings['crit_bisect_x_low']
-    crit_bisect_x_high = settings['crit_bisect_x_high']
-    crit_bisect_x_num = settings['crit_bisect_x_num']
-    crit_screen_round_decimal = settings['crit_screen_round_decimal']
+    im_x_init_low = settings['im_x_init_low']
+    im_x_init_high = settings['im_x_init_high']
+    im_x_init_num = settings['im_x_init_num']
+    im_screen_round_decimal = settings['im_screen_round_decimal']
 
-    crit_x_init_arr = jnp.linspace(
-    crit_bisect_x_low, 
-    crit_bisect_x_high, 
-    crit_bisect_x_num)
+    im_x_init_arr = jnp.linspace(
+    im_x_init_low, 
+    im_x_init_high, 
+    im_x_init_num)
 
     print('Initializing...')
 
@@ -393,10 +393,10 @@ def interpolate_im(settings, save_dir = None):
     N = settings['N']
     lp_name = settings['lens_param_name']
 
-    crit_bisect_x_low = settings['crit_bisect_x_low']
-    crit_bisect_x_high = settings['crit_bisect_x_high']
-    crit_bisect_x_num = settings['crit_bisect_x_num']
-    crit_screen_round_decimal = settings['crit_screen_round_decimal']
+    im_x_init_low = settings['im_x_init_low']
+    im_x_init_high = settings['im_x_init_high']
+    im_x_init_num = settings['im_x_init_num']
+    im_screen_round_decimal = settings['im_screen_round_decimal']
 
     lp_low_im = settings['lp_low_im']
     lp_high_im = settings['lp_high_im']
@@ -405,10 +405,10 @@ def interpolate_im(settings, save_dir = None):
     N_grid_im = settings['N_grid_im']
     N_crit_im = settings['N_crit_im']
 
-    crit_x_init_arr = jnp.linspace(
-    crit_bisect_x_low, 
-    crit_bisect_x_high, 
-    crit_bisect_x_num)
+    im_x_init_arr = jnp.linspace(
+    im_x_init_low, 
+    im_x_init_high, 
+    im_x_init_num)
 
     print('Initializing...')
 
@@ -506,22 +506,22 @@ def interpolate_im(settings, save_dir = None):
     x_crit_points_in_bound = x_crit_points_all[in_bound]
     kappa_crit_points_in_bound = kappa_crit_points_all[in_bound]
 
-    crit_x_init_arr = jnp.linspace(
-    crit_bisect_x_low, 
-    crit_bisect_x_high, 
-    crit_bisect_x_num)
-    crit_x_init_arr = jnp.concatenate((crit_x_init_arr, jnp.linspace(-0.1, 0.1, 100)))
+    im_x_init_arr = jnp.linspace(
+    im_x_init_low, 
+    im_x_init_high, 
+    im_x_init_num)
+    im_x_init_arr = jnp.concatenate((im_x_init_arr, jnp.linspace(-0.1, 0.1, 100)))
 
     get_crit_points_1D_vec = jnp.vectorize(
         get_crit_points_1D, 
         excluded = {0, 1, 2, 5},
         signature = '(),()->(3)')
     get_crit_points_2D_arr = lambda x: get_crit_points_1D_vec(
-        crit_x_init_arr, 
+        im_x_init_arr, 
         newt_cond_fun, 
         newt_step_fun,  
         x[:, 0], x[:, 1], 
-        crit_screen_round_decimal)
+        im_screen_round_decimal)
     
     strong_image_x = get_crit_points_2D_arr(strong_points)
     strong_image_x = x_im_nan_sub(strong_image_x, strong_points[:,0], strong_points[:,1])
