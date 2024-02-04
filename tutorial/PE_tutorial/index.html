@@ -514,28 +514,16 @@ The dictionaries required in the <code>json</code> configuration file are as fol
 <td><code>float</code></td>
 <td>Injected lens parameter of the lens</td>
 </tr>
-<tr>
-<td>- <code>waveform_arguments</code>: the keyword arguments to be passed to the waveform generator in <code>bilby</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>- <code>sampler_settings</code>: the keyword arguments to be passed to the <code>bilby</code> sampler object.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>- <code>interpolator_settings</code>: the settings of the interpolator used, see the tutorial for loading the interpolation tables for more details.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>- <code>prior_settings</code>: the settings for the priors of the lensing related parameters and <code>luminosity_distance</code>. For example, the prior type (<code>uniform</code>, <code>loguniform</code>) and limits of <code>MLz</code> can be specified by <code>MLz_prior_type</code>, <code>MLz_min</code> and <code>MLz_max</code>. For <code>luminosity_distance</code>, the prior can be chosen to be <code>uniformsourceframe</code>. Additional arguements for masking the region near the caustic are as follows:</td>
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
+</li>
+<li>
+<p><code>waveform_arguments</code>: the keyword arguments to be passed to the waveform generator in <code>bilby</code></p>
+</li>
+<li><code>sampler_settings</code>: the keyword arguments to be passed to the <code>bilby</code> sampler object.</li>
+<li><code>interpolator_settings</code>: the settings of the interpolator used, see the tutorial for loading the interpolation tables for more details.</li>
+<li>
+<p><code>prior_settings</code>: the settings for the priors of the lensing related parameters and <code>luminosity_distance</code>. For example, the prior type (<code>uniform</code>, <code>loguniform</code>) and limits of <code>MLz</code> can be specified by <code>MLz_prior_type</code>, <code>MLz_min</code> and <code>MLz_max</code>. For <code>luminosity_distance</code>, the prior can be chosen to be <code>uniformsourceframe</code>. Additional arguements for masking the region near the caustic are as follows:</p>
 <table>
 <thead>
 <tr>
@@ -555,13 +543,11 @@ The dictionaries required in the <code>json</code> configuration file are as fol
 <td><code>list</code></td>
 <td>Each item is a list <code>[[y_low, y_high],[l_low, l_high]]</code>, the boundaries of a rectangular region to exclude in the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane</td>
 </tr>
-<tr>
-<td>- <code>misc</code>: miscellaneous settings as follows:</td>
-<td></td>
-<td></td>
-</tr>
 </tbody>
 </table>
+</li>
+<li>
+<p><code>misc</code>: miscellaneous settings as follows:</p>
 <table>
 <thead>
 <tr>
