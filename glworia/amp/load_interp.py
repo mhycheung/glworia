@@ -49,8 +49,15 @@ def load_interpolators(interpolation_root_dir, **kwargs):
     N_grid_im = kwargs['N_grid_im']
     N_crit_im = kwargs['N_crit_im']
 
-    crit_param_high = kwargs['crit_param_high']
-    crit_param_low = kwargs['crit_param_low']
+    if 'crit_param_low' in kwargs:
+        crit_param_low = kwargs['crit_param_low']
+    else:
+        crit_param_low = lp_low
+
+    if 'crit_param_high' in kwargs:
+        crit_param_high = kwargs['crit_param_high']
+    else:
+        crit_param_high = lp_high
 
     interpolate_dir_name, image_interp_dir_name = get_interp_dir_name(kwargs)
 
