@@ -10,19 +10,25 @@
         <meta name="author" content="Mark Ho-Yeuk Cheung">
       
       
+        <link rel="canonical" href="https://mhycheung.github.io/jaxqualin/tutorial/PE_tutorial/">
       
       
+        <link rel="prev" href="../example_load_interpolation/">
       
-      <link rel="icon" href="/jaxqualin/assets/images/favicon.png">
+      
+        <link rel="next" href="../../api/amp/amplification_factor/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
     
     
       
-        <title>glworia</title>
+        <title>Parameter estimation - glworia</title>
       
     
     
-      <link rel="stylesheet" href="/jaxqualin/assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
       
       
 
@@ -41,9 +47,9 @@
       
     
     
-      <link rel="stylesheet" href="/jaxqualin/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("/jaxqualin/",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -61,6 +67,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#parameter-estimation-with-bilby" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -73,7 +84,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/jaxqualin/." title="glworia" class="md-header__button md-logo" aria-label="glworia" data-md-component="logo">
+    <a href="../.." title="glworia" class="md-header__button md-logo" aria-label="glworia" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -93,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Parameter estimation
             
           </span>
         </div>
@@ -180,7 +191,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/jaxqualin/." title="glworia" class="md-nav__button md-logo" aria-label="glworia" data-md-component="logo">
+    <a href="../.." title="glworia" class="md-nav__button md-logo" aria-label="glworia" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -210,7 +221,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -227,19 +238,21 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -253,7 +266,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Tutorial
@@ -267,7 +280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/tutorial/example_amplification_minimal/" class="md-nav__link">
+      <a href="../example_amplification_minimal/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -288,7 +301,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/tutorial/interpolation_tutorial/" class="md-nav__link">
+      <a href="../interpolation_tutorial/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -309,7 +322,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/tutorial/example_load_interpolation/" class="md-nav__link">
+      <a href="../example_load_interpolation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -327,10 +340,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/jaxqualin/tutorial/PE_tutorial/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -339,6 +361,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -395,7 +418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/api/amp/amplification_factor/" class="md-nav__link">
+      <a href="../../api/amp/amplification_factor/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -433,6 +456,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -444,8 +469,63 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+  
+  
+
+
+<h1 id="parameter-estimation-with-bilby">Parameter Estimation with Bilby</h1>
+<p>Given an interpolation table of the lensing amplification factor and an unlensed waveform model, the lensed waveform can be rapidly called.</p>
+<p>While any value on the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane (where <span class="arithmatex">\(y\)</span> is the impact parameter and <span class="arithmatex">\(l\)</span> the lens parameter) can be interpolated in principle as long as the value lies within the boundaries of the interpolation table, the interpolated amplification is ill-behaved close to the caustic because the magnification diverges formally.
+Therefore, when sampling over the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane for parameter estimation, we will ignore the region close to the caustic by assigning it a zero prior probability as implemented in the <code>glworia.pe.prior</code> module.
+We define such a region as the region between <span class="arithmatex">\(y_c(l) \pm \delta\)</span>, where <span class="arithmatex">\(y_c(l)\)</span> is the caustic curve in the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane, and <span class="arithmatex">\(\delta\)</span> is a constant. 
+For lens models that will reduce to the SIS lens at certain limits (e.g. <span class="arithmatex">\(x_c \to 0\)</span> for the CIS lens, or <span class="arithmatex">\(k \to 1\)</span> for gSIS), we also exclude the region close to the <span class="arithmatex">\(y = 1\)</span> caustic at those limits by setting the prior probability within a small rectangle to be zero.</p>
+<p>Example parameter estimation scripts using <code>bilby</code> can be found in the <code>bilby_scripts/</code> directory in the Git repo.
+The scripts can be run with a configuration file.</p>
+<pre><code>PE_full.py /path/to/config_file.json
+</code></pre>
+<p>Example configuration files can be found in the <code>config/</code> directory.
+The dictionaries required in the <code>json</code> configuration file are as follows:</p>
+<ul>
+<li><code>injection_parameters</code>: the injected parameters for the lensed waveform. These include all the parameters of the unlensed waveform (passed to the waveform generator in <code>bilby</code>), in addition to the following lens parameters:
+    | Name | Type | Description |
+    | ----------- | ----------- | ----------- |
+    | <code>y</code> | <code>float</code> | Injected impact parameter for the lensing set-up |
+    | <code>MLz</code> | <code>float</code> | Injected redshifted lens mass | 
+    | <code>lp</code> | <code>float</code> | Injected lens parameter of the lens |</li>
+<li><code>waveform_arguments</code>: the keyword arguments to be passed to the waveform generator in <code>bilby</code></li>
+<li><code>sampler_settings</code>: the keyword arguments to be passed to the <code>bilby</code> sampler object.</li>
+<li><code>interpolator_settings</code>: the settings of the interpolator used, see the tutorial for loading the interpolation tables for more details.</li>
+<li><code>prior_settings</code>: the settings for the priors of the lensing related parameters and <code>luminosity_distance</code>. For example, the prior type (<code>uniform</code>, <code>loguniform</code>) and limits of <code>MLz</code> can be specified by <code>MLz_prior_type</code>, <code>MLz_min</code> and <code>MLz_max</code>. For <code>luminosity_distance</code>, the prior can be chosen to be <code>uniformsourceframe</code>. Additional arguements for masking the region near the caustic are as follows:
+    | Name | Type | Description |
+    | ----------- | ----------- | ----------- |
+    | <code>crit_mask_settings</code> | <code>dict</code>| Parameters of the masker around the caustic, including <code>fac</code>, <code>cap_high</code> and <code>cap_low</code>. The masked region is defined to be between <code>y_c - min( y_c * fac, y_c - cap_low )</code> and <code>y_c + min( y_c * fac, y_c + cap_high)</code>. |
+    | <code>mask_boxes</code> | <code>list</code> | Each item is a list <code>[[y_low, y_high],[l_low, l_high]]</code>, the boundaries of a rectangular region to exclude in the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane |</li>
+<li><code>misc</code>: miscellaneous settings as follows:
+    | Name | Type | Description |
+    | ----------- | ----------- | ----------- |
+    | <code>zero_noise</code> | <code>bool</code> | Whether to perform a zero-noise injection. |
+    | <code>sampling_frequency</code> | <code>float</code> | The sampling rate of the signal in Hertz. |
+    | <code>minimum_frequency</code> | <code>float</code> | Minimum frequency cut-off. |
+    | <code>seed</code> | <code>int</code> | The seed used to generate random numbers for sampling. |
+    | <code>lp_name</code> | <code>str</code> | The name given to the lens parameter, e.g. <code>kappa</code> for the NFW lens. |
+    | <code>lp_latex</code> | <code>str</code> | The name of the lens parameter in latex form for making plots |
+    | <code>outdir_ext</code> | <code>str</code> | The name of the output directory |</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -479,12 +559,12 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "/jaxqualin/", "features": [], "search": "/jaxqualin/assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="/jaxqualin/assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
-        <script src="/jaxqualin/docs/javascripts/mathjax.js"></script>
+        <script src="../../docs/javascripts/mathjax.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       

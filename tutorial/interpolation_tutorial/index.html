@@ -10,19 +10,25 @@
         <meta name="author" content="Mark Ho-Yeuk Cheung">
       
       
+        <link rel="canonical" href="https://mhycheung.github.io/jaxqualin/tutorial/interpolation_tutorial/">
       
       
+        <link rel="prev" href="../example_amplification_minimal/">
       
-      <link rel="icon" href="/jaxqualin/assets/images/favicon.png">
+      
+        <link rel="next" href="../example_load_interpolation/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
     
     
       
-        <title>glworia</title>
+        <title>Constructing an interpolation table - glworia</title>
       
     
     
-      <link rel="stylesheet" href="/jaxqualin/assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
       
       
 
@@ -41,9 +47,9 @@
       
     
     
-      <link rel="stylesheet" href="/jaxqualin/assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("/jaxqualin/",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -61,6 +67,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#constructing-an-interpolation-table" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -73,7 +84,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/jaxqualin/." title="glworia" class="md-header__button md-logo" aria-label="glworia" data-md-component="logo">
+    <a href="../.." title="glworia" class="md-header__button md-logo" aria-label="glworia" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -93,7 +104,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Constructing an interpolation table
             
           </span>
         </div>
@@ -180,7 +191,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/jaxqualin/." title="glworia" class="md-nav__button md-logo" aria-label="glworia" data-md-component="logo">
+    <a href="../.." title="glworia" class="md-nav__button md-logo" aria-label="glworia" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -210,7 +221,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -227,19 +238,21 @@
       
   
   
+    
   
   
+  
     
     
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
@@ -253,7 +266,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Tutorial
@@ -267,7 +280,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/tutorial/example_amplification_minimal/" class="md-nav__link">
+      <a href="../example_amplification_minimal/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -285,10 +298,19 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="/jaxqualin/tutorial/interpolation_tutorial/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -297,6 +319,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -309,7 +332,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/tutorial/example_load_interpolation/" class="md-nav__link">
+      <a href="../example_load_interpolation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -330,7 +353,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/tutorial/PE_tutorial/" class="md-nav__link">
+      <a href="../PE_tutorial/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -395,7 +418,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/jaxqualin/api/amp/amplification_factor/" class="md-nav__link">
+      <a href="../../api/amp/amplification_factor/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -433,6 +456,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -444,8 +469,182 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+  
+  
+
+
+<h1 id="constructing-an-interpolation-table">Constructing an interpolation table</h1>
+<p>To construct an interpolation table, use the <code>do_interpolation.py</code> python script with a configuration file.</p>
+<pre><code>python scripts/do_interpolation.py -f /path/to/config_file.json -s /path/to/output/directory -im
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>flag</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--input-file</code></td>
+<td><code>-f</code></td>
+<td>Path to configuration file.</td>
+</tr>
+<tr>
+<td><code>--save-dir</code></td>
+<td><code>-s</code></td>
+<td>Path to directory for saving the interpolation tables.</td>
+</tr>
+<tr>
+<td><code>--image</code></td>
+<td><code>-im</code></td>
+<td>Also construct an interpolation table for the image magnifications and time delays, in addition to the amplification factor.</td>
+</tr>
+<tr>
+<td><code>--skip-strong</code></td>
+<td><code>-ss</code></td>
+<td>Skip the strong lensing region in the parameter space.</td>
+</tr>
+<tr>
+<td><code>--skip-weak</code></td>
+<td><code>-sw</code></td>
+<td>Skip the weak lensing region in the parameter space.</td>
+</tr>
+<tr>
+<td><code>--skip-amplification</code></td>
+<td><code>-sa</code></td>
+<td>Skip the computation of the amplification factor.</td>
+</tr>
+</tbody>
+</table>
+<p>The configuration file should be in <code>json</code> format with the following entries:</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lens_param_name</code></td>
+<td><code>str</code></td>
+<td>Name given to the lens parameter <span class="arithmatex">\(l\)</span>, e.g. <code>kappa</code> for the NFW lens or <code>x_c</code> for the CIS lens.</td>
+</tr>
+<tr>
+<td><code>y_low</code></td>
+<td><code>float</code></td>
+<td>Lower limit of the impact parameter <span class="arithmatex">\(y\)</span> in the interpolation domain.</td>
+</tr>
+<tr>
+<td><code>y_high</code></td>
+<td><code>float</code></td>
+<td>Upper limit of the impact parameter <span class="arithmatex">\(y\)</span> in the interpolation domain.</td>
+</tr>
+<tr>
+<td><code>lp_low</code></td>
+<td><code>float</code></td>
+<td>Lower limit of the lens parameter <span class="arithmatex">\(l\)</span> in the interpolation domain.</td>
+</tr>
+<tr>
+<td><code>lp_high</code></td>
+<td><code>float</code></td>
+<td>Upper limit of the lens parameter <span class="arithmatex">\(l\)</span> in the interpolation domain.</td>
+</tr>
+<tr>
+<td><code>N_grid</code></td>
+<td><code>int</code></td>
+<td>Number of interpolation nodes to use in each dimension on the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane to use for the weak lensing region.</td>
+</tr>
+<tr>
+<td><code>N_grid_strong</code></td>
+<td><code>int</code></td>
+<td>Number of interpolation nodes to use in each dimension on the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane to use for the strong lensing region.</td>
+</tr>
+<tr>
+<td><code>N_crit</code></td>
+<td><code>int</code></td>
+<td>Number of interpolation nodes on the caustic curve.</td>
+</tr>
+<tr>
+<td><code>N</code></td>
+<td><code>int</code></td>
+<td>Number of interpolation nodes in dimensionless time <span class="arithmatex">\(\tau\)</span> to use in each section of the time domain amplification factor.</td>
+</tr>
+<tr>
+<td><code>lens_model_name</code></td>
+<td><code>str</code></td>
+<td>The name of the lens model, e.g. <code>NFW</code>.</td>
+</tr>
+<tr>
+<td><code>crit_lp_N</code></td>
+<td><code>int</code></td>
+<td>Number of points in <span class="arithmatex">\(l\)</span> to use for a high-resolution interpolator tracing out the caustic curve in the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane.</td>
+</tr>
+<tr>
+<td><code>im_x_init_low</code></td>
+<td><code>float</code></td>
+<td>Lower limit of the <code>im_x_init</code> array of initial guesses for Newton's method when solving for image positions.</td>
+</tr>
+<tr>
+<td><code>im_x_init_high</code></td>
+<td><code>float</code></td>
+<td>Upper limit of the <code>im_x_init</code> array of initial guesses for Newton's method when solving for image positions.</td>
+</tr>
+<tr>
+<td><code>im_x_init_num</code></td>
+<td><code>int</code></td>
+<td>Number of points in the <code>im_x_init</code> array of initial guesses for Newton's method when solving for image positions.</td>
+</tr>
+<tr>
+<td><code>lp_low_im</code></td>
+<td><code>float</code></td>
+<td>Lower limit of the lens parameter <span class="arithmatex">\(l\)</span> in the interpolation domain for image related quantities.</td>
+</tr>
+<tr>
+<td><code>lp_high_im</code></td>
+<td><code>float</code></td>
+<td>Upper limit of the lens parameter <span class="arithmatex">\(l\)</span> in the interpolation domain for image related quantities.</td>
+</tr>
+<tr>
+<td><code>N_grid_im</code></td>
+<td><code>int</code></td>
+<td>Number of interpolation nodes to use in each dimension on the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane to use for interpolating image related quantities.</td>
+</tr>
+<tr>
+<td><code>N_crit_im</code></td>
+<td><code>int</code></td>
+<td>Number of interpolation nodes to use on the caustic curve for interpolating image related quantities.</td>
+</tr>
+<tr>
+<td><code>newt_max_iter_im</code></td>
+<td><code>int</code></td>
+<td>Maximum iterations for Newton's method when solving for the image positions.</td>
+</tr>
+<tr>
+<td><code>crit_lp_im</code></td>
+<td><code>int</code></td>
+<td>Number of points in <span class="arithmatex">\(l\)</span> to use for a high-resolution interpolator tracing out the caustic curve in the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane, for calculations related to the images.</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -479,12 +678,12 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "/jaxqualin/", "features": [], "search": "/jaxqualin/assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="/jaxqualin/assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
-        <script src="/jaxqualin/docs/javascripts/mathjax.js"></script>
+        <script src="../../docs/javascripts/mathjax.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
