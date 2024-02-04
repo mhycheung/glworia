@@ -8,8 +8,11 @@ theme: material
 
 nav:
   - Home: index.md
-  - Examples:
-    - Computing the amplification factor: examples/example_amplification_minimal.ipynb
+  - Tutorial:
+    - Computing the amplification factor: tutorial/example_amplification_minimal.ipynb
+    - Constructing an interpolation table: tutorial/interpolation_tutorial.md
+    - Loading an interpolation table: tutorial/example_load_interpolation.ipynb
+    - Parameter estimation: tutorial/PE_tutorial.md
   - API:
     - glworia.amp.amplification_factor: api/amp/amplification_factor.md
 
