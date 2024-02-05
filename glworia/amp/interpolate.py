@@ -29,15 +29,15 @@ def make_grid_points(settings, functions_dict = None, mid_point = False):
     N = settings['N']
     lens_model_name = settings['lens_model_name']
 
-    crit_bisect_x_low = settings['crit_bisect_x_low']
-    crit_bisect_x_high = settings['crit_bisect_x_high']
-    crit_bisect_x_num = settings['crit_bisect_x_num']
-    crit_screen_round_decimal = settings['crit_screen_round_decimal']
+    im_x_init_low = settings['im_x_init_low']
+    im_x_init_high = settings['im_x_init_high']
+    im_x_init_num = settings['im_x_init_num']
+    im_screen_round_decimal = settings['im_screen_round_decimal']
 
-    crit_x_init_arr = jnp.linspace(
-    crit_bisect_x_low, 
-    crit_bisect_x_high, 
-    crit_bisect_x_num)
+    im_x_init_arr = jnp.linspace(
+    im_x_init_low, 
+    im_x_init_high, 
+    im_x_init_num)
 
     param_arr = jnp.linspace(lp_low, lp_high, crit_lp_N)
 
@@ -126,11 +126,11 @@ def make_grid_points(settings, functions_dict = None, mid_point = False):
         excluded = {0, 1, 2, 5},
         signature = '(),()->(3)')
     get_crit_points_2D_arr = lambda x: get_crit_points_1D_vec(
-        crit_x_init_arr, 
+        im_x_init_arr, 
         newt_cond_fun, 
         newt_step_fun,  
         x[:, 0], x[:, 1], 
-        crit_screen_round_decimal)
+        im_screen_round_decimal)
     
     crit_image_x_newt = get_crit_points_2D_arr(crit_points_in_bound)
     crit_sad_x, crit_max_x, crit_min_x = jnp.hsplit(crit_image_x_newt, crit_image_x_newt.shape[1])
@@ -142,7 +142,7 @@ def make_grid_points(settings, functions_dict = None, mid_point = False):
 
     return weak_points, strong_points, crit_points_in_bound, crit_T_vir, lens_param_to_y_crit
 
-def interpolate(settings, save_dir = None, strong = True, weak = True):
+def interpolate(settings, save_dir = None, strong = True, weak = True, interp_crit = True):
 
     print('''
           
@@ -203,6 +203,11 @@ def interpolate(settings, save_dir = None, strong = True, weak = True):
 
     param_arr = jnp.linspace(lp_low, lp_high, crit_lp_N)
     crit_funcs = crtical_curve_interpolants(param_arr, T_funcs, crit_curve_helper_funcs)
+    if interp_crit:
+        crit_funcs_np = crtical_curve_interpolants_np(param_arr, T_funcs, crit_curve_helper_funcs)
+        os.makedirs(os.path.join(save_dir, 'crit_funcs'), exist_ok = True)
+        with open(os.path.join(save_dir, f'crit_funcs/{lens_model_name}_crit_funcs_{lp_low:.3f}_{lp_high:.3f}.pkl'), 'wb') as f:
+            pickle.dump(crit_funcs_np, f)
 
     lens_param_to_y_crit = crit_funcs['lens_param_to_y_crit']
     y_crit_to_lens_param = crit_funcs['y_crit_to_lens_param']
@@ -319,11 +324,9 @@ def interpolate(settings, save_dir = None, strong = True, weak = True):
                         N = N,
                         T0_max = T0_max,
                         **override_funcs_dict_weak)
-            print(y0, kappa)
             u_weak_min_out_list.append(contour_int.u_min_out)
             T_vir_list.append(contour_int.T_vir)
             mu_min_weak_list.append(contour_int.mu_min)
-            print(y0, kappa)
 
         print('Interpolating and saving weak-lensing points...')
 

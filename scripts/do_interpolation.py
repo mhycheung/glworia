@@ -1,7 +1,7 @@
 from jax.config import config
 config.update("jax_enable_x64", True)
 
-from glworia.interpolate import interpolate, interpolate_im
+from glworia.amp.interpolate import interpolate, interpolate_im
 import argparse
 import json
 
