@@ -15,7 +15,7 @@ from scipy.constants import c, G
 Msun = 1.9884099e+30
 Mtow = 8*np.pi*G/c**3*Msun
 
-from glworia.load_interp import *
+from ..amp.load_interp import *
 
 def lal_binary_black_hole_lensed(
         frequency_array, mass_1, mass_2, luminosity_distance, a_1, tilt_1,
