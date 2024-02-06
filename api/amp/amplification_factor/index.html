@@ -461,9 +461,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#glworia.amp.amplification_factor.amplification_computation_for_interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      amplification_computation_for_interpolation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#glworia.amp.amplification_factor.amplification_computation_prep" class="md-nav__link">
     <span class="md-ellipsis">
       amplification_computation_prep
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.amplification_factor.chev_first_half" class="md-nav__link">
+    <span class="md-ellipsis">
+      chev_first_half
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.amplification_factor.chev_points" class="md-nav__link">
+    <span class="md-ellipsis">
+      chev_points
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.amplification_factor.compute_F" class="md-nav__link">
+    <span class="md-ellipsis">
+      compute_F
     </span>
   </a>
   
@@ -521,9 +557,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#glworia.amp.amplification_factor.amplification_computation_for_interpolation" class="md-nav__link">
+    <span class="md-ellipsis">
+      amplification_computation_for_interpolation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#glworia.amp.amplification_factor.amplification_computation_prep" class="md-nav__link">
     <span class="md-ellipsis">
       amplification_computation_prep
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.amplification_factor.chev_first_half" class="md-nav__link">
+    <span class="md-ellipsis">
+      chev_first_half
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.amplification_factor.chev_points" class="md-nav__link">
+    <span class="md-ellipsis">
+      chev_points
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.amplification_factor.compute_F" class="md-nav__link">
+    <span class="md-ellipsis">
+      compute_F
     </span>
   </a>
   
@@ -568,6 +640,344 @@
 
 
 
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="glworia.amp.amplification_factor.amplification_computation_for_interpolation" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">amplification_computation_for_interpolation</span><span class="p">(</span><span class="n">T_funcs</span><span class="p">,</span> <span class="n">helper_funcs</span><span class="p">,</span> <span class="n">crit_funcs</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lens_params</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Compute the contour integral for constructing interpolation tables of the time domain amplification factor.</p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>T_funcs</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A dictionary of functions derived from the Fermat potential needed for computing the amplification factor.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>helper_funcs</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A dictionary of helper functions needed for the numerical implementation.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>crit_funcs</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A dictionary of functions for computing the caustic curve.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>
+                <code><span title="jax.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The 2D impact parameter. For now the second component is not used.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>lens_params</code></td>
+          <td>
+                <code><span title="jax.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The lens model parameter. For now only one parameter is supported.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Other Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>im_x_init_low</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The lower bound for the initial guess of the image position.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>im_x_init_high</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The upper bound for the initial guess of the image position.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>im_x_init_num</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The number of initial guesses of the image position.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>im_screen_round_decimal</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The number of decimal places to round the image position.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>T0_max</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The maximum value of the time delay to compute the time domain amplification up to.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>crit_run</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Whether the run corresponds to a run on the caustic.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>N</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The number of interpolation node in time in each segment.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>return_all</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Whether to return all the computed values for debugging.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>singular</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Whether the center of the lens is singular, i.e. a cusp or a pole in the time delay function.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>origin_type</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A function that returns the origin type of the lens model (cusp, pole or regular).</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>y_crit_override</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A function that overrides the computed values of the caustic curve.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>x_im_nan_sub</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A function that substitutes <code>nan</code> values for the image position.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>add_to_strong</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A function decides whether to add certain points to the strong lensing regime.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>T_vir_low_bound</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The lower bound in time delay when searching for the maximum point of the time domain amplification.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>contour_int</code></td>          <td>
+                <code><span title="glworia.amp.contour.contour_integral">contour_integral</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The contour integral object.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+<td><code>T0_min_out_segs</code></td>          <td>
+                <code>list[<span title="jax.ndarray">ndarray</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The corresponding time delays of the interpolation nodes for contour lines around the minimum. Each element of the list corresponds to a segment.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+<td><code>T0_arr_sad_max</code></td>          <td>
+                <code><span title="jax.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The corresponding time delays of the interpolation nodes for contour lines around the maximum point.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+<td><code>x_im</code></td>          <td>
+                <code><span title="jax.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The image positions.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+<td><code>T_val_max</code></td>          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The time delay at the maximum value of the time domain amplification.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
 
 
 <div class="doc doc-object doc-function">
@@ -701,6 +1111,378 @@
           <td>
             <div class="doc-md-description">
               <p>A dictionary of helper functions needed for computing the amplification factor.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="glworia.amp.amplification_factor.chev_first_half" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">chev_first_half</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span></code>
+
+</h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns the first n points out of 2*n Chebyshev points, with the n points covering the interval [a, b].</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="glworia.amp.amplification_factor.chev_points" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">chev_points</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span></code>
+
+</h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Returns n Chebyshev points in the interval [a, b].</p>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="glworia.amp.amplification_factor.compute_F" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">compute_F</span><span class="p">(</span><span class="n">w_interp</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lens_params</span><span class="p">,</span> <span class="n">T_funcs</span><span class="p">,</span> <span class="n">helper_funcs</span><span class="p">,</span> <span class="n">crit_funcs</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">T0_max</span><span class="p">,</span> <span class="n">crit_run</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">singular</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;regular&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Compute the amplification factor in the frequency domain.</p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>w_interp</code></td>
+          <td>
+                <code><span title="jax.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The frequencies to compute the amplification factor.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>y</code></td>
+          <td>
+                <code><span title="jax.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The 2D impact parameter. For now the second component is not used.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>lens_params</code></td>
+          <td>
+                <code><span title="jax.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The lens model parameter. For now only one parameter is supported.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>T_funcs</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A dictionary of functions derived from the Fermat potential needed for computing the amplification factor.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>helper_funcs</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A dictionary of helper functions needed for the numerical implementation.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>crit_funcs</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Callable">Callable</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A dictionary of functions for computing the caustic curve.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>N</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The number of interpolation node in time in each segment.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>T0_max</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The maximum value of the time delay to compute the time domain amplification up to.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>crit_run</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Whether the run corresponds to a run on the caustic.</p>
+            </div>
+          </td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>singular</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Whether the center of the lens is singular, i.e. a cusp or a pole in the time delay function.</p>
+            </div>
+          </td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>origin</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The origin type of the lens model (cusp, pole or regular).</p>
+            </div>
+          </td>
+          <td>
+                <code>&#39;regular&#39;</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Other Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>N_fft</code></td>
+          <td>
+                <code>int</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The number of points in the Fast Fourier Transform.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>t_fft_short_max_fac</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The factor determining the maximum value of the time delay to compute the amplification factor in the short time regime.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>t_fft_long_max_fac</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The factor determining the maximum value of the time delay to compute the amplification factor in the long time regime.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>w_trans_weak_fac</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[float]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The transition frequencies between different FFT regimes and geometrical optics for the weak lensing regime.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>w_trans_strong_fac</code></td>
+          <td>
+                <code><span title="typing.List">List</span>[float]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The transition frequencies between different FFT regimes and geometrical optics for the strong lensing regime.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>sig_fac</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The width of the transition region.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td><code>**kwargs</code></td>
+          <td>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Additional keyword arguments passed to <code>amplification_computation_for_interpolation</code>.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>F_interp</code></td>          <td>
+                <code><span title="jax.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The interpolated amplification factor.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+<td><code>F_interp_raw</code></td>          <td>
+                <code><span title="typing.List">List</span>[<span title="jax.ndarray">ndarray</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A list of the amplification factor from the different FFT regimes, for debugging.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+<td><code>contour_obj</code></td>          <td>
+                <code><span title="glworia.amp.contour.contour_integral">contour_integral</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The contour integral object.</p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+<td><code>partitions</code></td>          <td>
+                <code><span title="jax.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The transition frequencies.</p>
             </div>
           </td>
         </tr>
