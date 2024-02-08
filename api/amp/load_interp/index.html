@@ -10,25 +10,23 @@
         <meta name="author" content="Mark Ho-Yeuk Cheung">
       
       
-        <link rel="canonical" href="https://mhycheung.github.io/jaxqualin/tutorial/PE_tutorial/">
+        <link rel="canonical" href="https://mhycheung.github.io/jaxqualin/api/amp/load_interp/">
       
       
-        <link rel="prev" href="../example_load_interpolation/">
+        <link rel="prev" href="../lens_model/">
       
       
-        <link rel="next" href="../../api/amp/amplification_factor/">
       
-      
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
     
     
       
-        <title>Parameter estimation - glworia</title>
+        <title>glworia.amp.load_interp - glworia</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.50c56a3b.min.css">
       
       
 
@@ -47,9 +45,9 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -68,7 +66,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#parameter-estimation-with-bilby" class="md-skip">
+        <a href="#api-for-the-glworiaampload_interp-module" class="md-skip">
           Skip to content
         </a>
       
@@ -84,7 +82,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="glworia" class="md-header__button md-logo" aria-label="glworia" data-md-component="logo">
+    <a href="../../.." title="glworia" class="md-header__button md-logo" aria-label="glworia" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -104,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Parameter estimation
+              glworia.amp.load_interp
             
           </span>
         </div>
@@ -191,7 +189,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="glworia" class="md-nav__button md-logo" aria-label="glworia" data-md-component="logo">
+    <a href="../../.." title="glworia" class="md-nav__button md-logo" aria-label="glworia" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -221,7 +219,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -230,6 +228,134 @@
   
 
       </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tutorial
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorial
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/example_amplification_minimal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Computing the amplification factor
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/interpolation_tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Constructing an interpolation table
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/example_load_interpolation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Loading an interpolation table
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tutorial/PE_tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Parameter estimation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
@@ -252,24 +378,24 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
-    Tutorial
+    API
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            Tutorial
+            API
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -280,11 +406,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../example_amplification_minimal/" class="md-nav__link">
+      <a href="../amplification_factor/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Computing the amplification factor
+    glworia.amp.amplification_factor
   </span>
   
 
@@ -301,11 +427,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../interpolation_tutorial/" class="md-nav__link">
+      <a href="../contour/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Constructing an interpolation table
+    glworia.amp.contour
   </span>
   
 
@@ -322,11 +448,53 @@
   
   
     <li class="md-nav__item">
-      <a href="../example_load_interpolation/" class="md-nav__link">
+      <a href="../interpolate/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Loading an interpolation table
+    glworia.amp.interpolate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lens_functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    glworia.amp.lens_functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lens_model/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    glworia.amp.lens_model
   </span>
   
 
@@ -352,178 +520,18 @@
         
       
       
-      <a href="./" class="md-nav__link md-nav__link--active">
-        
-  
-  <span class="md-ellipsis">
-    Parameter estimation
-  </span>
-  
-
-      </a>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
+        <label class="md-nav__link md-nav__link--active" for="__toc">
           
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
   
   <span class="md-ellipsis">
-    API
+    glworia.amp.load_interp
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            API
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/amp/amplification_factor/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    glworia.amp.amplification_factor
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/amp/contour/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    glworia.amp.contour
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/amp/interpolate/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    glworia.amp.interpolate
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/amp/lens_functions/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    glworia.amp.lens_functions
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/amp/lens_model/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    glworia.amp.lens_model
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../api/amp/load_interp/" class="md-nav__link">
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -532,6 +540,53 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.load_interp" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_interp
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.load_interp.F_interp" class="md-nav__link">
+    <span class="md-ellipsis">
+      F_interp
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.load_interp.load_interpolators" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_interpolators
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -564,6 +619,41 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.load_interp" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_interp
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.load_interp.F_interp" class="md-nav__link">
+    <span class="md-ellipsis">
+      F_interp
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#glworia.amp.load_interp.load_interpolators" class="md-nav__link">
+    <span class="md-ellipsis">
+      load_interpolators
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -580,127 +670,211 @@
   
 
 
-<h1 id="parameter-estimation-with-bilby">Parameter Estimation with Bilby</h1>
-<p>Given an interpolation table of the lensing amplification factor and an unlensed waveform model, the lensed waveform can be rapidly called.</p>
-<p>While any value on the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane (where <span class="arithmatex">\(y\)</span> is the impact parameter and <span class="arithmatex">\(l\)</span> the lens parameter) can be interpolated in principle as long as the value lies within the boundaries of the interpolation table, the interpolated amplification is ill-behaved close to the caustic because the magnification diverges formally.
-Therefore, when sampling over the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane for parameter estimation, we will ignore the region close to the caustic by assigning it a zero prior probability as implemented in the <code>glworia.pe.prior</code> module.
-We define such a region as the region between <span class="arithmatex">\(y_c(l) \pm \delta\)</span>, where <span class="arithmatex">\(y_c(l)\)</span> is the caustic curve in the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane, and <span class="arithmatex">\(\delta\)</span> is a constant. 
-For lens models that will reduce to the SIS lens at certain limits (e.g. <span class="arithmatex">\(x_c \to 0\)</span> for the CIS lens, or <span class="arithmatex">\(k \to 1\)</span> for gSIS), we also exclude the region close to the <span class="arithmatex">\(y = 1\)</span> caustic at those limits by setting the prior probability within a small rectangle to be zero.</p>
-<p>Example parameter estimation scripts using <code>bilby</code> can be found in the <code>bilby_scripts/</code> directory in the Git repo.
-The scripts can be run with a configuration file.</p>
-<pre><code>PE_full.py /path/to/config_file.json
-</code></pre>
-<p>Example configuration files can be found in the <code>config/</code> directory.
-The dictionaries required in the <code>json</code> configuration file are as follows:</p>
-<ul>
-<li>
-<p><code>injection_parameters</code>: the injected parameters for the lensed waveform. These include all the parameters of the unlensed waveform (passed to the waveform generator in <code>bilby</code>), in addition to the following lens parameters:</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>y</code></td>
-<td><code>float</code></td>
-<td>Injected impact parameter for the lensing set-up</td>
-</tr>
-<tr>
-<td><code>MLz</code></td>
-<td><code>float</code></td>
-<td>Injected redshifted lens mass</td>
-</tr>
-<tr>
-<td><code>lp</code></td>
-<td><code>float</code></td>
-<td>Injected lens parameter of the lens</td>
-</tr>
-</tbody>
-</table>
-</li>
-<li>
-<p><code>waveform_arguments</code>: the keyword arguments to be passed to the waveform generator in <code>bilby</code></p>
-</li>
-<li><code>sampler_settings</code>: the keyword arguments to be passed to the <code>bilby</code> sampler object.</li>
-<li><code>interpolator_settings</code>: the settings of the interpolator used, see the tutorial for loading the interpolation tables for more details.</li>
-<li>
-<p><code>prior_settings</code>: the settings for the priors of the lensing related parameters and <code>luminosity_distance</code>. For example, the prior type (<code>uniform</code>, <code>loguniform</code>) and limits of <code>MLz</code> can be specified by <code>MLz_prior_type</code>, <code>MLz_min</code> and <code>MLz_max</code>. For <code>luminosity_distance</code>, the prior can be chosen to be <code>uniformsourceframe</code>. Additional arguements for masking the region near the caustic are as follows:</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>crit_mask_settings</code></td>
-<td><code>dict</code></td>
-<td>Parameters of the masker around the caustic, including <code>fac</code>, <code>cap_high</code> and <code>cap_low</code>. The masked region is defined to be between <code>y_c - min( y_c * fac, y_c - cap_low )</code> and <code>y_c + min( y_c * fac, y_c + cap_high)</code>.</td>
-</tr>
-<tr>
-<td><code>mask_boxes</code></td>
-<td><code>list</code></td>
-<td>Each item is a list <code>[[y_low, y_high],[l_low, l_high]]</code>, the boundaries of a rectangular region to exclude in the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane</td>
-</tr>
-</tbody>
-</table>
-</li>
-<li>
-<p><code>misc</code>: miscellaneous settings as follows:</p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>zero_noise</code></td>
-<td><code>bool</code></td>
-<td>Whether to perform a zero-noise injection.</td>
-</tr>
-<tr>
-<td><code>sampling_frequency</code></td>
-<td><code>float</code></td>
-<td>The sampling rate of the signal in Hertz.</td>
-</tr>
-<tr>
-<td><code>minimum_frequency</code></td>
-<td><code>float</code></td>
-<td>Minimum frequency cut-off.</td>
-</tr>
-<tr>
-<td><code>seed</code></td>
-<td><code>int</code></td>
-<td>The seed used to generate random numbers for sampling.</td>
-</tr>
-<tr>
-<td><code>lp_name</code></td>
-<td><code>str</code></td>
-<td>The name given to the lens parameter, e.g. <code>kappa</code> for the NFW lens.</td>
-</tr>
-<tr>
-<td><code>lp_latex</code></td>
-<td><code>str</code></td>
-<td>The name of the lens parameter in latex form for making plots</td>
-</tr>
-<tr>
-<td><code>outdir_ext</code></td>
-<td><code>str</code></td>
-<td>The name of the output directory</td>
-</tr>
-</tbody>
-</table>
-</li>
-</ul>
+<h1 id="api-for-the-glworiaampload_interp-module">API for the <code>glworia.amp.load_interp</code> module</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="glworia.amp.load_interp"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="glworia.amp.load_interp.F_interp" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">F_interp</span><span class="p">(</span><span class="n">w_interp</span><span class="p">,</span> <span class="n">y_interp</span><span class="p">,</span> <span class="n">lp_interp</span><span class="p">,</span> <span class="n">interpolators</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">return_geom</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">strong_lens_cond_override</span><span class="o">=</span><span class="n">strong_lens_cond_override_default</span><span class="p">)</span></code>
+
+</h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Interpolate the frequency domain amplification factor for a given frequency array, given interpolation tables.</p>
+
+
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>w_interp</code></td>
+          <td>
+                <code><span title="numpy.ndarray">ndarray</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The output frequency array that the interpolated amplitude will be evaluated at.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>y_interp</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The impact parameter</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>lp_interp</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The value of the lens parameter.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>interpolators</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Any">Any</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A dictionary of interpolation tables.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>settings</code></td>
+          <td>
+                <code><span title="typing.Dict">Dict</span>[str, <span title="typing.Union">Union</span>[str, float, int]]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A dictionary of settings including <code>N</code> and <code>T0_max</code>.</p>
+            </div>
+          </td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>return_geom</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>Whether to return the geometrical optics approximated amplification and other quantities for debugging.</p>
+            </div>
+          </td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>strong_lens_cond_override</code></td>
+          <td>
+                <code><span title="typing.Callable">Callable</span></code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>A function that overrides the condition for strong lensing.</p>
+            </div>
+          </td>
+          <td>
+                <code><span title="glworia.amp.load_interp.strong_lens_cond_override_default">strong_lens_cond_override_default</span></code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>F_interp</code></td>          <td>
+                <code><span title="typing.Union">Union</span>[<span title="numpy.ndarray">ndarray</span>, <span title="typing.Tuple">Tuple</span>]</code>
+          </td>
+          <td>
+            <div class="doc-md-description">
+              <p>The interpolated amplitude.</p>
+            </div>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h4 id="glworia.amp.load_interp.load_interpolators" class="doc doc-heading">
+          <code class="highlight language-python"><span class="n">load_interpolators</span><span class="p">(</span><span class="n">interpolation_root_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h4>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Load the interpolation tables for the amplitude calculation.</p>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
 
 
 
@@ -747,12 +921,12 @@ The dictionaries required in the <code>json</code> configuration file are as fol
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
-        <script src="../../docs/javascripts/mathjax.js"></script>
+        <script src="../../../docs/javascripts/mathjax.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       
