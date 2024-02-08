@@ -15,6 +15,11 @@ nav:
     - Parameter estimation: tutorial/PE_tutorial.md
   - API:
     - glworia.amp.amplification_factor: api/amp/amplification_factor.md
+    - glworia.amp.contour: api/amp/contour.md
+    - glworia.amp.interpolate: api/amp/interpolate.md
+    - glworia.amp.lens_functions: api/amp/lens_functions.md
+    - glworia.amp.lens_model: api/amp/lens_model.md
+    - glworia.amp.load_interp: api/amp/load_interp.md
 
 plugins:
   - search
