@@ -2,6 +2,8 @@ import numpy as np
 import pickle
 import os
 import warnings
+from typing import List, Tuple, Union, Optional, Dict, Any, Callable
+
 
 def get_interp_dir_name(settings):
 
@@ -27,7 +29,10 @@ def get_interp_dir_name(settings):
 
     return interpolate_dir_name, image_interp_dir_name
 
-def load_interpolators(interpolation_root_dir, **kwargs):
+def load_interpolators(interpolation_root_dir: str, **kwargs) -> Dict[str, Any]:
+    """
+    Load the interpolation tables for the amplitude calculation.
+    """
 
     y_low = kwargs['y_low']
     y_high = kwargs['y_high']
@@ -254,8 +259,24 @@ def interp_partitions(w_interp, ws, Fs, partitions, sigs, T_im, mu_im, return_ge
 def strong_lens_cond_override_default(strongly_lensed, y_interp, kappa_interp):
     return strongly_lensed
 
-def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_geom = False,
-             strong_lens_cond_override = strong_lens_cond_override_default):
+def F_interp(w_interp: np.ndarray, y_interp: float, lp_interp: float, interpolators: Dict[str, Any], settings: Dict[str, Union[str, float, int]], return_geom: bool = False,
+             strong_lens_cond_override: Callable = strong_lens_cond_override_default) -> Union[np.ndarray, Tuple]:
+    """
+    Interpolate the frequency domain amplification factor for a given frequency array, given interpolation tables.
+
+    Parameters:
+        w_interp: The output frequency array that the interpolated amplitude will be evaluated at.
+        y_interp: The impact parameter
+        lp_interp: The value of the lens parameter.
+        interpolators: A dictionary of interpolation tables.
+        settings: A dictionary of settings including `N` and `T0_max`.
+        return_geom: Whether to return the geometrical optics approximated amplification and other quantities for debugging.
+        strong_lens_cond_override: A function that overrides the condition for strong lensing.
+
+    Returns:
+        F_interp: The interpolated amplitude.
+
+    """
 
     N = settings['N']
     T0_max = settings['T0_max']
@@ -286,32 +307,32 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_g
     #     if masked:
     #         return w_interp*(np.inf + 1.j*np.inf)
 
-    T_sad = interp_strong_full_sad_T_adj(y_interp, kappa_interp)
+    T_sad = interp_strong_full_sad_T_adj(y_interp, lp_interp)
     strongly_lensed = ~np.isnan(T_sad)
-    strongly_lensed = strong_lens_cond_override(strongly_lensed, y_interp, kappa_interp)
+    strongly_lensed = strong_lens_cond_override(strongly_lensed, y_interp, lp_interp)
 
     if strongly_lensed:
-        u_interp_low = interp_strong_low(y_interp, kappa_interp).ravel()
-        u_interp_mid_1 = interp_strong_mid_1(y_interp, kappa_interp).ravel()
-        u_interp_mid_2 = interp_strong_mid_2(y_interp, kappa_interp).ravel()
-        u_interp_high = interp_strong_high(y_interp, kappa_interp).ravel()
-        u_interp_sad_max = interp_strong_sad_max(y_interp, kappa_interp).ravel()
-        T_sad_interp = interp_strong_full_sad_T_adj(y_interp, kappa_interp)
-        T_max_interp = interp_strong_full_max_T_adj(y_interp, kappa_interp)
-        mu_sad_interp = interp_strong_full_sad_mu(y_interp, kappa_interp)
-        mu_max_interp = interp_strong_full_max_mu(y_interp, kappa_interp)
-        mu_min_interp = interp_strong_full_min_mu(y_interp, kappa_interp)
+        u_interp_low = interp_strong_low(y_interp, lp_interp).ravel()
+        u_interp_mid_1 = interp_strong_mid_1(y_interp, lp_interp).ravel()
+        u_interp_mid_2 = interp_strong_mid_2(y_interp, lp_interp).ravel()
+        u_interp_high = interp_strong_high(y_interp, lp_interp).ravel()
+        u_interp_sad_max = interp_strong_sad_max(y_interp, lp_interp).ravel()
+        T_sad_interp = interp_strong_full_sad_T_adj(y_interp, lp_interp)
+        T_max_interp = interp_strong_full_max_T_adj(y_interp, lp_interp)
+        mu_sad_interp = interp_strong_full_sad_mu(y_interp, lp_interp)
+        mu_max_interp = interp_strong_full_max_mu(y_interp, lp_interp)
+        mu_min_interp = interp_strong_full_min_mu(y_interp, lp_interp)
     else:
-        u_interp_low = interp_weak_low(y_interp, kappa_interp).ravel()
-        u_interp_mid_1 = interp_weak_mid_1(y_interp, kappa_interp).ravel()
-        u_interp_mid_2 = interp_weak_mid_2(y_interp, kappa_interp).ravel()
-        u_interp_high = interp_weak_high(y_interp, kappa_interp).ravel()
+        u_interp_low = interp_weak_low(y_interp, lp_interp).ravel()
+        u_interp_mid_1 = interp_weak_mid_1(y_interp, lp_interp).ravel()
+        u_interp_mid_2 = interp_weak_mid_2(y_interp, lp_interp).ravel()
+        u_interp_high = interp_weak_high(y_interp, lp_interp).ravel()
         u_interp_sad_max = None
-        T_sad_interp = interp_T_vir(y_interp, kappa_interp)
+        T_sad_interp = interp_T_vir(y_interp, lp_interp)
         T_max_interp = np.nan
         mu_sad_interp = np.nan
         mu_max_interp = np.nan
-        mu_min_interp = interp_weak_full_min_mu(y_interp, kappa_interp)
+        mu_min_interp = interp_weak_full_min_mu(y_interp, lp_interp)
 
     T0_min_out_interp_seg, T0_sad_max_interp = make_T0_arr_multiple_chev_np(
         N,
@@ -322,7 +343,7 @@ def F_interp(w_interp, y_interp, kappa_interp, interpolators, settings, return_g
 
     T_im_hi = np.nanmax((T_max_interp, T_sad_interp))
     if np.isnan(T_im_hi):
-        warnings.warn('T_im_hi is nan: y = {}, kappa = {}'.format(y_interp, kappa_interp), RuntimeWarning)
+        warnings.warn('T_im_hi is nan: y = {}, kappa = {}'.format(y_interp, lp_interp), RuntimeWarning)
     t_fft_short_max = T_im_hi*20
     t_fft_long_max = np.min((T_im_hi*2000, 1000))
     t_fft_short = np.linspace(0, t_fft_short_max, 2**16)

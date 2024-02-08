@@ -8,7 +8,66 @@ from functools import partial
 from .utils import *
 from .amplification_factor import *
 
-def get_lens_model(lens_model_name):
+from typing import List, Tuple, Union, Optional, Dict, Any, Callable
+
+class LensModel:
+    """
+    A parent class for lens models. Class methods, most importantly the Fermat Potential function `Psi`, to be implemented in the child classes.
+
+    """
+    def __init__(self):
+        pass
+
+    def get_Psi(self) -> Callable:
+        """
+        Returns the Fermat potential function for the lens model. To be implemented in the child classes.
+        """
+        raise NotImplementedError
+
+    def get_origin_type(self) -> Callable:
+        """
+        Returns a function for obtaining the behavior of the origin of the lens model. Can be 'regular', 'cusp' or 'im'.
+        """
+        return origin_type_default
+    
+    def get_y_crit_override(self) -> Callable:
+        """
+        Returns a function for overriding the caustic curve computed.
+        """
+        return y_crit_override_default
+    
+    def get_x_im_nan_sub(self, dT_1D: Callable) -> Callable:
+        """
+        Returns a function for overriding the image positions if they are `nan`.
+        """
+        return x_im_nan_sub_default
+    
+    def get_irregular_crit_points_dict(self) -> Optional[Dict[str, jnp.ndarray]]:
+        """
+        Returns a dictionary of special caustic points added by hand.
+        """
+        return None
+    
+    def get_add_to_strong(self):
+        """
+        Returns a function for determining whether to add a point to the strong lensing region.
+        """
+        return add_to_strong_default
+    
+    def get_override_funcs_dict(self, dT_1D: Callable) -> Dict[str, Callable]:
+        """
+        Returns a dictionary of the functions for overriding various results.
+        """
+        return {'y_crit_override': self.get_y_crit_override(),
+                'x_im_nan_sub': self.get_x_im_nan_sub(dT_1D),
+                'origin_type': self.get_origin_type(),
+                'irregular_crit_points_dict': self.get_irregular_crit_points_dict(),
+                'add_to_strong': self.get_add_to_strong()}
+
+def get_lens_model(lens_model_name: str) -> LensModel:
+    """
+    Obtain the `LensModel` object from the name of the lens model.
+    """
     if lens_model_name == 'NFW':
         lm = NFWLens()
     elif lens_model_name == 'gSIS':
@@ -18,33 +77,6 @@ def get_lens_model(lens_model_name):
     else:
         raise ValueError(f'lens model {lens_model_name} not supported')
     return lm
-
-class LensModel:
-    def __init__(self):
-        pass
-
-    def get_origin_type(self):
-        return origin_type_default
-    
-    def get_y_crit_override(self):
-        return y_crit_override_default
-    
-    def get_x_im_nan_sub(self, dT_1D):
-        return x_im_nan_sub_default
-    
-    def get_irregular_crit_points_dict(self):
-        return None
-    
-    def get_add_to_strong(self):
-        return add_to_strong_default
-    
-    def get_override_funcs_dict(self, dT_1D):
-        return {'y_crit_override': self.get_y_crit_override(),
-                'x_im_nan_sub': self.get_x_im_nan_sub(dT_1D),
-                'origin_type': self.get_origin_type(),
-                'irregular_crit_points_dict': self.get_irregular_crit_points_dict(),
-                'add_to_strong': self.get_add_to_strong()}
-
 
 class NFWLens(LensModel):
 

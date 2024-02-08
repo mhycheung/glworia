@@ -5,6 +5,8 @@ from functools import partial
 from .root import *
 from .utils import *
 
+from typing import List, Tuple, Union, Optional, Dict, Any, Callable
+
 @partial(jit, static_argnums=(0,))
 def rk4_step(f, x, h, y, lens_params):
     k1 = f(x, y, lens_params)
@@ -29,10 +31,6 @@ def contour_int_step_func_full(x_iter, T, dT, dT_norm, f, T_hess_det, h):
                        jnp.max(jnp.array([0.1, 1/r]))
                        ]))]
                      ))
-    # kappa = jnp.min(jnp.array([5., 
-    #     jnp.max(
-    #         jnp.array([jnp.abs(T_hess_det(x_old, y, lens_params)/dT_norm(x_old, y, lens_params)**2), 0.1]))]
-    #                  ))
     dx_prop = rk4_step(f, x_old, h/kappa, y, lens_params)
     x_prop = x_old + dx_prop
     T_prop = T(x_prop, y, lens_params)
@@ -86,13 +84,51 @@ class critical_point:
         self.mu = mu(self.x0, lens_params)
 
 class contour_integral:
+    """
+    A class for computing the amplification factor by contour integration.
 
-    def __init__(self, x_im, multi_image,
-                 T_funcs, y, lens_params,
-                 critical = False, 
-                 T0_min_out_segments = None,
-                 T0_sad_max_segment = None,
-                 singular = False):
+    Attributes:
+        y: 2D impact parameter. The second component is ignored for now.
+        y0: 1D impact parameter.
+        lens_params: The lens parameters. Only one parameter is supported for now.
+        T0_min_out_segments: A list of the arrays of time delay values for the contours passing to the right of the minimum image.
+        T0_sad_max_segment: The time delay values for the contours passing between the saddle and the maximum image.
+        x_im: The image positions in 1D. The order of the images are from the left to the right, i.e. saddle, maximum, minimum.
+        mus: The magnification of the images.
+        u_min_out: A list of arrays of the time domain amplification for the contours passing to the right of the minimum image, corresponding to the time delays `T0_min_out_segments`.
+        u_sad_max: The time domain amplification for the contours passing between the saddle and the maximum image, corresponding to the time delays `T0_sad_max_segment`.
+        T_vir: The time delay at the maximum value of the time domain amplification.
+    """
+
+    y: jnp.ndarray
+    y0: float
+    lens_params: jnp.ndarray
+    T0_min_out_segments: List[jnp.ndarray]
+    T0_sad_max_segment: jnp.ndarray
+    x_im: jnp.ndarray
+    mus: jnp.ndarray
+    u_min_out: List[jnp.ndarray]
+    u_sad_max: jnp.ndarray
+    T_vir: float
+
+    def __init__(self, x_im: jnp.ndarray, multi_image: bool,
+                 T_funcs: Dict[str, Callable], y: jnp.ndarray, lens_params: jnp.ndarray,
+                 critical: bool = False, 
+                 T0_min_out_segments: Optional[List[jnp.ndarray]] = None,
+                 T0_sad_max_segment: Optional[jnp.ndarray] = None,
+                 singular: bool = False):
+        """
+        Parameters:
+            x_im: The image positions in 1D. The order of the images are from the left to the right, i.e. saddle, maximum, minimum.
+            multi_image: A boolean indicating whether there are multiple images.
+            T_funcs: A dictionary of functions derived from the Fermat Potential.
+            y: 2D impact parameter. The second component is ignored for now.
+            lens_params: The lens parameters. Only one parameter is supported for now.
+            critical: A boolean indicating whether the supplied impact parameter lies on the caustic.
+            T0_min_out_segments: A list of the arrays of time delay values for the contours passing to the right of the minimum image.
+            T0_sad_max_segment: The time delay values for the contours passing between the saddle and the maximum image.
+            singular: A boolean indicating whether the lens is singular at the origion.
+        """
         
         self.T0_min_out_segments = T0_min_out_segments
         self.multi_image = multi_image
@@ -151,7 +187,14 @@ class contour_integral:
                          self.x_im_sad, self.x_im_max, self.args_1D, bisection_1D_v, bisect_cond_fun,
                      bisect_step_fun_T_1D, self.T_1D)
 
-    def contour_integrate(self, contour_cond_fun, contour_step_fun):
+    def contour_integrate(self, contour_cond_fun: Callable, contour_step_fun: Callable):
+        """
+        Computes the contour integral
+
+        Parameters:
+            contour_cond_fun: The condition function for terminating the contour integral.
+            contour_step_fun: The step function for the contour integral.
+        """
         self.u_min_out, self.iter_min_out = contour_int(
             self.T0_min_out_segments + self.T_im_min, self.x_inits_min_out, 
             contour_cond_fun, contour_step_fun, self.y, self.lens_params)
@@ -177,210 +220,6 @@ class contour_integral:
             self.T_vir = T0_arr[max_indx]
             T0_arr = jnp.linspace(T0_arr[int(jnp.max(jnp.array([0, max_indx-1])))], T0_arr[max_indx+1], len(T0_arr))
         return self.T_vir
-
-
-# class contour_init_1D:
-
-#     def __init__(self, crit_points, T0_arr, T_1D, T, dT, dT_norm, f,
-#                  T_hess_det, mu, y, lens_params, long_num, short_num, dense_width, cusp_points = jnp.array([0]),
-#                  critical_run = True):
-        
-#         self.T = T
-#         self.T_1D = T_1D
-#         self.dT = dT
-#         self.dT_norm = dT_norm
-#         self.f = f
-#         self.T_hess_det = T_hess_det
-#         self.mu = mu
-#         self.critical_run = critical_run
-#         if self.critical_run:
-#             crit_points.at[:2].set(jnp.array([jnp.nan, jnp.nan]))
-
-#         self.update_params(crit_points, T0_arr, y, 
-#                            lens_params, long_num, short_num,
-#                              dense_width, cusp_points)
-
-#     def update_params(self, crit_points, T0_arr, y, lens_params, long_num, short_num, dense_width, cusp_points = jnp.array([0])):
-#         self.crit_points_screened = crit_points
-#         crit_points_sorted = jnp.sort(crit_points)
-
-#         self.y = y
-#         self.y0 = y[0]
-#         self.y1 = y[1]
-#         self.args = [y, lens_params]
-#         self.args_1D = [self.y0, lens_params]
-#         if self.y1 != 0.:
-#             raise ValueError('y1 != 0 not yet implemented')
-#         self.lens_params = lens_params
-#         self.long_num = long_num
-#         self.short_num = short_num
-#         self.dense_width = dense_width
-
-#         if len(crit_points_sorted) == 3:
-#             self.min = critical_point(jnp.array([crit_points_sorted[2], jnp.float64(0)]), 'min', self.T, self.mu, y, lens_params)
-#             self.max = critical_point(jnp.array([crit_points_sorted[1], jnp.float64(0)]), 'max', self.T, self.mu, y, lens_params)
-#             self.sad = critical_point(jnp.array([crit_points_sorted[0], jnp.float64(0)]), 'sad', self.T, self.mu, y, lens_params)
-#             self.min_x0 = self.min.x0
-#             self.sad_T = self.sad.T
-#             self.max_T = self.max.T
-#             self.sad_x0 = self.sad.x0
-#             self.max_x0 = self.max.x0
-#             self.multiple_image = True
-
-#         elif len(crit_points_sorted) == 2:
-#             self.min = critical_point(jnp.array([crit_points_sorted[1], jnp.float64(0)]), 'min', self.T, self.mu, y, lens_params)
-#             self.max = critical_point(jnp.array([cusp_points[0], jnp.float64(0)]), 'max', self.T, self.mu, y, lens_params, is_cusp = True)
-#             self.sad = critical_point(jnp.array([crit_points_sorted[0], jnp.float64(0)]), 'sad', self.T, self.mu, y, lens_params)
-#             self.min_x0 = self.min.x0
-#             self.sad_T = self.sad.T
-#             self.max_T = self.max.T
-#             self.sad_x0 = self.sad.x0
-#             self.max_x0 = self.max.x0
-#             self.has_cusp = True
-#             self.multiple_image = True
-        
-#         elif len(crit_points_sorted) == 1:
-#             self.min = critical_point(jnp.array([crit_points_sorted[0], jnp.float64(0)]), 'min', self.T, self.mu, y, lens_params)
-#             self.max = None
-#             self.sad = None
-#             self.min_x0 = self.min.x0
-#             self.sad_T = jnp.nan
-#             self.max_T = jnp.nan
-#             self.sad_x0 = jnp.nan
-#             self.max_x0 = jnp.nan
-#             self.multiple_image = False
-
-#         self.T0_arr = T0_arr + self.min.T
-#         if hasattr(self, 'x_init_min_out'):
-#             del self.x_init_min_out
-#         if hasattr(self, 'x_init_sad_max'):
-#             del self.x_init_sad_max
-#         if hasattr(self, 'x_outer'):
-#             del self.x_outer
-#         if hasattr(self, 'T0_sad_indx'):
-#             del self.T0_sad_indx
-#         if hasattr(self, 'T0_max_indx'):
-#             del self.T0_max_indx
-#         if hasattr(self, 'T0_sad_max'):
-#             del self.T0_sad_max
-#         if hasattr(self, 'u_min_out'):
-#             del self.u_min_out
-#         if hasattr(self, 'u_sad_max'):
-#             del self.u_sad_max
-#         if hasattr(self, 'iter_min_out'):
-#             del self.iter_min_out
-#         if hasattr(self, 'iter_sad_max'):
-#             del self.iter_sad_max
-#         if hasattr(self, 'u_sum'):
-#             del self.u_sum
-        
-#         # self.x_outer = self.find_outer()
-
-#     def get_T0_sad_max(self):
-#         if self.multiple_image:
-#             # T0_sad_indx = jnp.searchsorted(self.T0_arr, self.sad_T)
-#             # T0_max_indx = jnp.searchsorted(self.T0_arr, self.max_T)
-#             # self.T0_sad_max = self.T0_arr[T0_sad_indx:T0_max_indx]
-#             # self.T0_sad_indx = T0_sad_indx
-#             # self.T0_max_indx = T0_max_indx
-
-#             # self.T0_sad_max = jnp.linspace(self.sad_T, self.max_T, num = len(self.T0_arr) + 2)[1:-1]
-#             T0_sad_dense_1 = jnp.linspace(self.sad_T , self.sad_T + self.dense_width, num = self.short_num + 1)[1:]
-#             T0_sad_dense_2 = jnp.linspace(self.max_T - self.dense_width, self.max_T, num = self.short_num + 1)[:-1]
-#             T0_sad_dense_1 = T0_sad_dense_1[~jnp.isnan(T0_sad_dense_1)]
-#             T0_sad_dense_2 = T0_sad_dense_2[~jnp.isnan(T0_sad_dense_2)]
-#             T0_sad_max_sparse = jnp.linspace(self.sad_T, self.max_T, num = self.long_num + 2*self.short_num - len(T0_sad_dense_1) - len(T0_sad_dense_2) + 2)[1:-1]
-#             self.T0_sad_max = jnp.sort(jnp.concatenate((T0_sad_max_sparse, T0_sad_dense_1, T0_sad_dense_2)))
-#         else:
-#             self.T0_sad_max = self.T0_arr
-
-#     def find_outer(self, bisect_cond_fun, bisect_step_fun_T_1D, margin_fac = 1.5):
-#         x_outer = find_outer(self.T0_arr, self.min_x0, self.sad_T, self.min.T, self.T_1D, self.args_1D, bisect_cond_fun, bisect_step_fun_T_1D, margin_fac)
-#         self.x_outer = x_outer
-#         # x_max_over = jnp.sqrt(2 * jnp.max(self.T0_arr))
-#         # self.T0_max = jnp.max(self.T0_arr)
-#         # x_outer = bisection_1D(self.T_1D, self.T0_max, self.min.x0,
-#         #                         x_max_over, bisect_cond_fun, bisect_step_fun_T_1D, self.args_1D)
-#         # self.x_outer = x_outer*margin_fac
-#         # return self.x_outer
-
-#     # def x_init_sad_max_routine(self, bisection_1D_v, bisect_cond_fun, bisect_step_fun_T_1D):
-#     #     self.T0_sad_indx = jnp.searchsorted(self.T0_arr, self.sad.T)
-#     #     self.T0_max_indx = jnp.searchsorted(self.T0_arr, self.max.T)
-#     #     self.T0_sad_max = self.T0_arr[self.T0_sad_indx:self.T0_max_indx]
-
-#     #     x0_init_sad_max = bisection_1D_v(self.T_1D, self.T0_sad_max, self.sad.x0,
-#     #                                                 self.max.x0,
-#     #                                 bisect_cond_fun, bisect_step_fun_T_1D, self.args_1D)
-#     #     self.x_init_sad_max = turn_1D_to_2D(x0_init_sad_max, 0.)
-
-#     def make_x_inits(self, bisection_1D_v, bisect_cond_fun, bisect_step_fun_T_1D, x_init_sad_max_routine):
-
-#         x_init_min_out, x0_init_sad_max = make_x_inits(self.T0_arr, self.min_x0, self.T0_sad_max, self.sad_x0, self.max_x0, self.x_outer, self.T_1D, self.args_1D,
-#                                                                                              self.multiple_image, bisection_1D_v, bisect_cond_fun, bisect_step_fun_T_1D, x_init_sad_max_routine)
-#         self.x_init_min_out = x_init_min_out
-#         self.x_init_sad_max = x0_init_sad_max
-
-#         # x0_init_min_out = bisection_1D_v(self.T_1D, self.T0_arr, self.min.x0, self.x_outer,
-#         #                                 bisect_cond_fun, bisect_step_fun_T_1D, self.args_1D)
-#         # self.x_init_min_out = turn_1D_to_2D(x0_init_min_out, 0.)
-
-#         # jax.lax.cond(self.multiple_image, self.x_init_sad_max_routine, pass_fun, (self, bisection_1D_v, bisect_cond_fun, bisect_step_fun_T_1D))
-
-#         # if self.multiple_image:
-#         #     self.T0_sad_indx = jnp.searchsorted(self.T0_arr, self.sad.T)
-#         #     self.T0_max_indx = jnp.searchsorted(self.T0_arr, self.max.T)
-#         #     self.T0_sad_max = self.T0_arr[self.T0_sad_indx:self.T0_max_indx]
-
-#         #     x0_init_sad_max = bisection_1D_v(self.T_1D, self.T0_sad_max, self.sad.x0,
-#         #                                                 self.max.x0,
-#         #                                 bisect_cond_fun, bisect_step_fun_T_1D, self.args_1D)
-#         #     self.x_init_sad_max = turn_1D_to_2D(x0_init_sad_max, 0.)
-
-
-#     # def make_contour_int_v(self, h = 0.01):
-#     #     contour_int_v = make_contour_int_v(self.T, self.dT, 
-#     #                                        self.dT_norm, self.f,
-#     #                                        self.T_hess_det, h)
-#     #     self.contour_int_v = contour_int_v
-
-#     # def compute_contour_ints_segs(self, contour_cond_func, contour_step_func)
-
-#     def computer_contour_ints(self, contour_cond_func, contour_step_func, compute_contour_ints_sad_max):
-        
-#         u_min_out, iter_min_out, u_sad_max, iter_sad_max = compute_contour_ints(self.T0_arr, self.T0_sad_max, self.x_init_min_out,
-#                                                                                   self.x_init_sad_max, self.y, self.lens_params, 
-#                                                                                   contour_cond_func, contour_step_func, compute_contour_ints_sad_max)
-        
-#         self.u_min_out = u_min_out
-#         self.iter_min_out = iter_min_out
-#         self.u_sad_max = u_sad_max
-#         self.iter_sad_max = iter_sad_max
-
-#         # contour_int_v = make_contour_int_v(self.T, self.dT, 
-#         #                                    self.dT_norm, self.f,
-#         #                                    self.T_hess_det, h)
-#         # self.u_min_out, self.iter_min_out = contour_int(
-#         #     self.T0_arr, self.T, self.dT, self.dT_norm, 
-#         #     self.x_init_min_out, self.f, self.T_hess_det,
-#         #     contour_cond_func, contour_step_func, self.y, self.lens_params)
-#         # if self.multiple_image:
-#         #     self.u_sad_max, self.iter_sad_max = contour_int(
-#         #     self.T0_sad_max, self.T, self.dT, self.dT_norm, 
-#         #     self.x_init_sad_max, self.f, self.T_hess_det,
-#         #     contour_cond_func, contour_step_func, self.y, self.lens_params)
-
-#     def sum_results(self):
-
-#         # u_sum = sum_results(self.T0_arr, self.u_min_out, self.u_sad_max, self.T0_sad_indx, self.T0_max_indx, self.multiple_image)
-#         # self.u_sum = u_sum
-
-#         u_sum = jnp.zeros(len(self.T0_arr))
-#         u_sum += self.u_min_out
-#         self.u_sum = u_sum
-#         if self.multiple_image:
-#             self.u_sum += jnp.interp(self.T0_arr, self.T0_sad_max, self.u_sad_max, left = 0., right = 0.)
-#             # self.u_sum = u_sum.at[self.T0_sad_indx:self.T0_max_indx].add(self.u_sad_max)
 
 
 def find_outer(T0_arr, min_x0, T_sad, T_min, T_1D, args_1D, bisect_cond_fun, bisect_step_fun_T_1D, margin_fac = 10.):

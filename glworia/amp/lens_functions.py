@@ -7,45 +7,56 @@ from jax import grad, hessian, jit
 from functools import partial
 from .utils import *
 
-@jit
-def Psi_plummer(x, lens_params):
-    kappa = lens_params[0]
-    return kappa / 2 * jnp.log(1 + jnp.linalg.norm(x)**2)
+from typing import List, Tuple, Union, Optional, Dict, Any, Callable
 
-@jit
-def Psi_NFW(x, lens_params):
-    kappa = lens_params[0]
-    x_norm = jnp.linalg.norm(x)
-    dim_1 = jnp.ones(x.shape)
-    x_safe_low = jnp.where(x_norm<1, x, 0.5*dim_1)
-    x_safe_hi = jnp.where(x_norm<1, 2*dim_1, x)
-    x_safe_low_norm = jnp.linalg.norm(x_safe_low)
-    x_safe_hi_norm = jnp.linalg.norm(x_safe_hi)
-    Psi = jnp.where(x_norm<1,
-        kappa / 2 * (jnp.log(x_safe_low_norm/2)**2 - jnp.arctanh(jnp.sqrt(1-x_safe_low_norm**2))**2),
-        kappa / 2 * (jnp.log(x_safe_hi_norm/2)**2 + jnp.arctan(jnp.sqrt(x_safe_hi_norm**2 - 1))**2))
-    return Psi
+# @jit
+# def Psi_plummer(x, lens_params):
+#     kappa = lens_params[0]
+#     return kappa / 2 * jnp.log(1 + jnp.linalg.norm(x)**2)
 
-@jit
-def Psi_gSIS(x, lens_params):
-    k = lens_params[0]
-    return jnp.linalg.norm(x)**(2 - k)/(2 - k)
+# @jit
+# def Psi_NFW(x, lens_params):
+#     kappa = lens_params[0]
+#     x_norm = jnp.linalg.norm(x)
+#     dim_1 = jnp.ones(x.shape)
+#     x_safe_low = jnp.where(x_norm<1, x, 0.5*dim_1)
+#     x_safe_hi = jnp.where(x_norm<1, 2*dim_1, x)
+#     x_safe_low_norm = jnp.linalg.norm(x_safe_low)
+#     x_safe_hi_norm = jnp.linalg.norm(x_safe_hi)
+#     Psi = jnp.where(x_norm<1,
+#         kappa / 2 * (jnp.log(x_safe_low_norm/2)**2 - jnp.arctanh(jnp.sqrt(1-x_safe_low_norm**2))**2),
+#         kappa / 2 * (jnp.log(x_safe_hi_norm/2)**2 + jnp.arctan(jnp.sqrt(x_safe_hi_norm**2 - 1))**2))
+#     return Psi
 
-@jit
-def Psi_CIS(x, lens_params):
-    x_c = jnp.abs(lens_params[0])
-    x_t = jnp.sqrt(x_c**2 + jnp.linalg.norm(x)**2)
-    x_c_safe = jnp.where(x_c > 1e-15, x_c, 1e-15)
-    Psi = jnp.where(x_c > 1e-15, 
-            x_t + x_c_safe * jnp.log(2 * x_c_safe / (x_t + x_c_safe)), 
-            x_t
-                    )
-    return Psi
+# @jit
+# def Psi_gSIS(x, lens_params):
+#     k = lens_params[0]
+#     return jnp.linalg.norm(x)**(2 - k)/(2 - k)
 
-def Psi_PM(x, lens_params):
-    return jnp.log(jnp.linalg.norm(x))
+# @jit
+# def Psi_CIS(x, lens_params):
+#     x_c = jnp.abs(lens_params[0])
+#     x_t = jnp.sqrt(x_c**2 + jnp.linalg.norm(x)**2)
+#     x_c_safe = jnp.where(x_c > 1e-15, x_c, 1e-15)
+#     Psi = jnp.where(x_c > 1e-15, 
+#             x_t + x_c_safe * jnp.log(2 * x_c_safe / (x_t + x_c_safe)), 
+#             x_t
+#                     )
+#     return Psi
 
-def make_T_funcs(Psi):
+# def Psi_PM(x, lens_params):
+#     return jnp.log(jnp.linalg.norm(x))
+
+def make_T_funcs(Psi: Callable) -> Dict[str, Callable]:
+    """
+    Construct the relevant functions derived from the Fermat Potential.
+
+    Parameters:
+        Psi: the Fermat Potential function.
+
+    Returns:
+        T_funcs: a dictionary of the relevant functions.
+    """
 
     rot_90 = jnp.array([[0, -1], [1, 0]])   
 
