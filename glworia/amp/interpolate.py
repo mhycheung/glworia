@@ -15,7 +15,24 @@ import os, pickle
 
 from scipy.interpolate import LinearNDInterpolator
 
-def make_grid_points(settings, functions_dict = None, mid_point = False):
+from typing import List, Tuple, Union, Optional, Dict, Any, Callable
+
+def make_grid_points(settings: Dict[str, Union[str, float, int]], functions_dict: Optional[Dict[str,Dict[str, Callable]]] = None, mid_point: bool = False) -> Tuple[jnp.ndarray, jnp.ndarray, jnp.ndarray, jnp.ndarray, Callable]:
+    """
+    Make the interpolation node grid points of the amplification factor.
+
+    Parameters:
+        settings: a dictionary containing the settings for the interpolation.
+        functions_dict: a dictionary of dictionaries containing relevant functions for computing the amplification factor.
+        mid_point: whether to use the mid-points of the grid instead of the grid points themselves. Useful for estimating the error of the interpolation.
+
+    Returns:
+        weak_points: the interpolation nodes in the weak-lensing regime.
+        strong_points: the interpolation nodes in the strong-lensing regime.
+        crit_points_in_bound: the interpolation nodes on the caustic curve.
+        crit_T_vir: the time delay of the saddle/maximum image on the caustic curve. The saddle and maximum images merge on the caustic.
+        lens_param_to_y_crit: a function that maps the lens parameter to y on the caustic curve.
+    """
 
     lp_low = settings['lp_low']
     lp_high = settings['lp_high']
@@ -142,8 +159,17 @@ def make_grid_points(settings, functions_dict = None, mid_point = False):
 
     return weak_points, strong_points, crit_points_in_bound, crit_T_vir, lens_param_to_y_crit
 
-def interpolate(settings, save_dir = None, strong = True, weak = True, interp_crit = True):
+def interpolate(settings: Dict[str, Union[str, int, float]], save_dir: Optional[str] = None, strong: bool = True, weak: bool = True, interp_crit: bool = True):
+    """
+    Interpolate the time domain amplification factor and save the interpolation tables.
 
+    Parameters:
+        settings: a dictionary containing the settings for the interpolation.
+        save_dir: the directory to save the interpolation tables.
+        strong: whether to compute and interpolate the strong-lensing points.
+        weak: whether to compute and interpolate the weak-lensing points.
+        interp_crit: whether to interpolate the caustic curve.
+    """
     print('''
           
 ########################################################          
@@ -370,7 +396,14 @@ def interpolate(settings, save_dir = None, strong = True, weak = True, interp_cr
     print('Done!')
 
 
-def interpolate_im(settings, save_dir = None):
+def interpolate_im(settings: Dict[str, Union[str, float, int]], save_dir: Optional[str] = None):
+    """
+    Interpolate the time delay and magnification of images.
+
+    Parameters:
+        settings: a dictionary containing the settings for the interpolation.
+        save_dir: the directory to save the interpolation tables.
+    """
 
     print('''
           

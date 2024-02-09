@@ -7,6 +7,9 @@ import json
 from bilby.core.utils.io import *
 
 class Uniform2DMaskDist(BaseJointPriorDist):
+    """
+    A 2D joint prior with a mask around the caustic curve in the $y$-$l$ plane.
+    """
 
     def __init__(
             self,

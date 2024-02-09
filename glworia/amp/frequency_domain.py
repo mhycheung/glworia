@@ -1,4 +1,5 @@
 import jax.numpy as jnp
+from typing import List, Tuple, Union, Optional, Dict, Any, Callable
 
 def interp_F_fft_strong_jnp(t_fft, T0_min_out_interp_full, u_min_out_interp_full, 
                  T0_sad_max_interp, u_interp_sad_max):
@@ -34,7 +35,24 @@ def smooth_increase_jnp(x, x0, a):
 def smooth_decrease_jnp(x, x0, a):
     return 1 - smooth_increase_jnp(x, x0, a)
 
-def interp_partitions_jnp(w_interp, ws, Fs, partitions, sigs, T_im, mu_im, origin = 'regular'):
+def interp_partitions_jnp(w_interp: jnp.ndarray, ws: List[jnp.ndarray], Fs: List[jnp.ndarray], partitions: jnp.ndarray, sigs: jnp.ndarray, T_im: jnp.ndarray, mu_im: jnp.ndarray, origin: str = 'regular') -> Tuple[jnp.ndarray, List[jnp.ndarray]]:
+    """
+    Patches together the interpolated frequency domain amplitude from different frequency regimes.
+
+    Parameters:
+        w_interp: The output frequency array that the interpolated amplitude will be evaluated at.
+        ws: A list of frequency arrays that the amplitude is interpolated from.
+        Fs: A list of amplitude arrays that the amplitude is interpolated from.
+        partitions: The transition frequencies between different frequency regimes. Should have a length one less than `ws` and `Fs`.
+        sigs: The width of the transition regions.
+        T_im: The time delay of the images.
+        mu_im: The magnification of the images.
+        origin: The type of the origin. Can be `regular`, `cusp` or `im`.
+    
+    Returns:
+        F_interp: The interpolated amplitude.
+        F_interp_raw: A list of the interpolated amplitudes from different frequency regimes.
+    """
     if origin not in ['regular', 'im']:
         mu_im.at[1].set(0.)
         T_im.at[1].set(0.)

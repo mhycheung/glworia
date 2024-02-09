@@ -16,9 +16,9 @@ interpolator_dir = os.path.join(project_dir, 'interpolation')
 
 sys.path.append(project_dir)
 
-from glworia.load_interp import *
-from bilby_scripts.waveform import *
-from bilby_scripts.prior import *
+from glworia.amp.load_interp import *
+from glworia.pe.waveform import *
+from glworia.pe.prior import *
 
 parser = argparse.ArgumentParser()
 
@@ -48,6 +48,9 @@ waveform_arguments_unlensed = config['waveform_arguments']
 sampler_settings = config['sampler_settings']
 misc = config['misc']
 
+if 'log_level' not in misc:
+    misc['log_level'] = 'info'
+
 outdir = os.path.join(project_dir, 'outdir', misc['outdir_ext'])
 
 def is_number(s):
@@ -72,7 +75,7 @@ label = runname
 outdir = os.path.join(outdir, misc['outdir_ext'], label)
 os.makedirs(outdir, exist_ok=True)
 
-bilby.core.utils.setup_logger(outdir=outdir, label=label, log_level = 'debug')
+bilby.core.utils.setup_logger(outdir=outdir, label=label, log_level = misc['log_level'])
 
 # Set up a random seed for result reproducibility.  This is optional!
 bilby.core.utils.random.seed(misc['seed'])
