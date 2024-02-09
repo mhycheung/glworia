@@ -10,7 +10,7 @@
     "N": 200,
     "lens_model_name": "NFW",
 
-    "crit_lp_N": 100000,
+    "crit_lp_N": 5000,
     "im_x_init_low": -10,
     "im_x_init_high": 10,
     "im_x_init_num": 100,
