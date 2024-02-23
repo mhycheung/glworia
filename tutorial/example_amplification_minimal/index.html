@@ -67,6 +67,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#compute-amplification-factor" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -281,6 +286,19 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Computing the amplification factor
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -291,6 +309,52 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#import-modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Import modules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fermat-potential" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fermat potential
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compute-and-plot-the-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Compute and plot the results
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -554,6 +618,43 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#import-modules" class="md-nav__link">
+    <span class="md-ellipsis">
+      Import modules
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fermat-potential" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fermat potential
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#compute-and-plot-the-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Compute and plot the results
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -570,8 +671,6 @@
   
   
 
-
-  <h1>Computing the amplification factor</h1>
 
 <script>
 (function (global, factory) {
@@ -975,7 +1074,28 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </style>
 <!-- End of mermaid configuration --><div class="jupyter-wrapper">
 <div class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="compute-amplification-factor">Compute amplification factor<a class="anchor-link" href="#compute-amplification-factor">¶</a></h1><p>Here we will compute the amplification factor for a custom lens profile.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="import-modules">Import modules<a class="anchor-link" href="#import-modules">¶</a></h3>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
@@ -1025,11 +1145,26 @@ import matplotlib.pyplot as plt</div>
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr" tabindex="0">
 <pre>WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
-I0000 00:00:1706818445.491190  827101 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient created.
+I0000 00:00:1708723679.623631 2963387 tfrt_cpu_pjrt_client.cc:349] TfrtCpuClient created.
 No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
 </pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="fermat-potential">Fermat potential<a class="anchor-link" href="#fermat-potential">¶</a></h3><p>Here we will consider the Plummer model, with a Fermat potential given by
+$$ \psi(x) = \frac{\kappa}{2} \log \left( 1 + x^2\right). $$
+We will have to write a <code>PlummerLens</code> class and specify the Fermat potential in the <code>get_Psi</code> method.
+The function should be written with <code>jax.numpy</code> functions and the <code>@jit</code> decorator.</p>
+<p>We also implemented the NFW, gSIS and CIS lenses, which are located in the <code>glworia.amp.lens_model</code> module.</p>
 </div>
 </div>
 </div>
@@ -1080,6 +1215,17 @@ No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Construct the relevant functions (e.g. $\vec{\nabla} \psi$) for searching for the image positions and computing the amplification</p>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -1113,6 +1259,17 @@ crit_curve_helper_funcs = make_crit_curve_helper_func(T_funcs)</div>
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Compute the caustic curve in the $y$-$l$ plane and make an interpolator for the curve.</p>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -1142,6 +1299,17 @@ crit_funcs = crtical_curve_interpolants(param_arr, T_funcs, crit_curve_helper_fu
 </div>
 </div>
 </div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h3 id="compute-and-plot-the-results">Compute and plot the results<a class="anchor-link" href="#compute-and-plot-the-results">¶</a></h3>
+</div>
+</div>
+</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -1161,22 +1329,22 @@ crit_funcs = crtical_curve_interpolants(param_arr, T_funcs, crit_curve_helper_fu
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">ws</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
-<span class="n">lens_params</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.</span><span class="p">])</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">ws</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="mi">6</span><span class="p">)</span> <span class="c1"># dimensionless frequency array to compute the amplification factor at</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span> <span class="c1"># y[1] has to be 0 for now</span>
+<span class="n">lens_params</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">5.</span><span class="p">])</span> <span class="c1"># this is kappa</span>
 
-<span class="n">N</span> <span class="o">=</span> <span class="mi">200</span>
-<span class="n">T0_max</span> <span class="o">=</span> <span class="mf">1000.</span>
+<span class="n">N</span> <span class="o">=</span> <span class="mi">200</span> <span class="c1"># number of points in time to do the contour integral in each segment</span>
+<span class="n">T0_max</span> <span class="o">=</span> <span class="mf">1000.</span> <span class="c1"># the contour with the largest time to be computed</span>
 
 <span class="n">F_interp</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">compute_F</span><span class="p">(</span><span class="n">ws</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">lens_params</span><span class="p">,</span> <span class="n">T_funcs</span><span class="p">,</span> <span class="n">helper_funcs</span><span class="p">,</span> <span class="n">crit_funcs</span><span class="p">,</span>
               <span class="n">N</span><span class="p">,</span> <span class="n">T0_max</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-5">ws = jnp.linspace(1e-2, 1e3, 10**6)
-y = jnp.array([0.1, 0.])
-lens_params = jnp.array([5.])
+<div class="clipboard-copy-txt" id="cell-5">ws = jnp.linspace(1e-2, 1e3, 10**6) # dimensionless frequency array to compute the amplification factor at
+y = jnp.array([0.1, 0.]) # y[1] has to be 0 for now
+lens_params = jnp.array([5.]) # this is kappa
 
-N = 200
-T0_max = 1000.
+N = 200 # number of points in time to do the contour integral in each segment
+T0_max = 1000. # the contour with the largest time to be computed
 
 F_interp, _, _, _ = compute_F(ws, y, lens_params, T_funcs, helper_funcs, crit_funcs,
               N, T0_max)</div>
