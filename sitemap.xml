@@ -2,62 +2,62 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/api/amp/amplification_factor/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/api/amp/contour/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/api/amp/frequency_domain/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/api/amp/interpolate/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/api/amp/lens_functions/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/api/amp/lens_model/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/api/amp/load_interp/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/tutorial/PE_tutorial/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/tutorial/example_amplification_minimal/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/tutorial/example_load_interpolation/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://mhycheung.github.io/jaxqualin/tutorial/interpolation_tutorial/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-23</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

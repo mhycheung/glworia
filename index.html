@@ -65,6 +65,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#key-features" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -221,6 +226,17 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="." class="md-nav__link md-nav__link--active">
         
   
@@ -230,6 +246,68 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-cite" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to Cite
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      License
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -551,6 +629,59 @@
   
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#key-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Key Features
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-to-cite" class="md-nav__link">
+    <span class="md-ellipsis">
+      How to Cite
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#license" class="md-nav__link">
+    <span class="md-ellipsis">
+      License
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -567,9 +698,45 @@
   
 
 
-  <h1>Home</h1>
+<h1 align="center">
+    glworia
+</h1>
 
+<h4 align="center"> A python package for gravitational-wave lensing computations including wave-optics effects. </h4>
 
+<p align="center">
+    <a href = "https://arxiv.org/abs/0000.00000"><img src="https://img.shields.io/badge/arXiv-0000.00000-b31b1b.svg"></a>
+    <a href="https://badge.fury.io/py/glworia"><img src="https://badge.fury.io/py/glworia.svg"></a>
+    <a href="https://github.com/mhycheung/glworia/actions/workflows/test-pypi-upload.yml "><img src="https://github.com/mhycheung/glworia/actions/workflows/test-pypi-upload.yml/badge.svg"></a>
+    <a href="https://github.com/mhycheung/glworia/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+    <a href="https://pypi.org/project/glworia/"><img src="https://img.shields.io/pypi/pyversions/glworia"></a>
+</p>
+
+<h2 id="key-features">Key Features</h2>
+<ul>
+<li>Compute the frequency-dependent lensing amplification factor</li>
+<li>Use your custom lens model, any spherically symmetry lens is supported</li>
+<li>The only function you need to provide is the Fermat potential - <code>jax</code> will take care of the rest with auto differentiation!</li>
+<li>Build interpolation tables for your lens model</li>
+<li>Perform Bayesian parameter estimation with <code>bilby</code></li>
+<li>Runs on GPUs</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<pre><code class="language-shell">pip install glworia
+</code></pre>
+<h2 id="usage">Usage</h2>
+<p>Basic usage examples can be found under the Examples tab on the left.</p>
+<h2 id="how-to-cite">How to Cite</h2>
+<p>Please cite the methods paper if you used our package to produce results in your publication.
+Here is the BibTeX entry:</p>
+<pre><code>Coming soon!
+</code></pre>
+<h2 id="license">License</h2>
+<p>MIT</p>
+<hr />
+<blockquote>
+<p>GitHub <a href="https://github.com/mhycheung">@mhycheung</a></p>
+</blockquote>
 
 
 
