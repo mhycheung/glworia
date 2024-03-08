@@ -6,7 +6,7 @@ from .root import *
 from .plot import *
 from .lens_model import *
 
-from jax.config import config
+from jax import config
 config.update("jax_enable_x64", True)
 
 import matplotlib.pyplot as plt

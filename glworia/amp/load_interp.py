@@ -3,7 +3,10 @@ import pickle
 import os
 import warnings
 from typing import List, Tuple, Union, Optional, Dict, Any, Callable
+from scipy.constants import c, G
 
+Msun = 1.9884099e+30
+Mtow = 8*np.pi*G/c**3*Msun
 
 def get_interp_dir_name(settings):
 
@@ -213,13 +216,15 @@ def interp_F_fft_weak(t_fft, T0_min_out_interp_full, u_min_out_interp_full):
     F_fft = np.interp(t_fft, T0_min_out_interp_full, u_min_out_interp_full)
     return F_fft
 
-def amplification_fft_np(t_fft, Ft_fft):
+def amplification_fft_np(t_fft, Ft_fft, adj = None):
 
+    if adj is None:
+        adj = Ft_fft[-1]
     fft_len = len(t_fft)
     dt = t_fft[1] - t_fft[0]
     w_arr = np.linspace(0, 2*np.pi/dt, num = fft_len)
     Fw_raw = w_arr*np.fft.fft(Ft_fft)*dt
-    Fw = -np.imag(Fw_raw) - 1.j*np.real(Fw_raw) + Ft_fft[-1]
+    Fw = -np.imag(Fw_raw) - 1.j*np.real(Fw_raw) + adj
 
     return w_arr, Fw
 
@@ -405,3 +410,120 @@ def crit_mask(y, lp, y_interp_func, fac = 0.1):
 def crit_mask_capped(y, lp, y_interp_func, fac = 0.5, cap_low = 0., cap_high = np.inf):
     y_crit = y_interp_func(lp)
     return np.abs(y - y_crit) < np.max(np.min((fac*y_crit, cap_high)), cap_low)
+
+def F_interp_f_array(sampling_frequency: float, num_f: int, M_Lz: float, y_interp: float, lp_interp: float, interpolators: Dict[str, Any], settings: Dict[str, Union[str, float, int]], return_geom: bool = False,
+             strong_lens_cond_override: Callable = strong_lens_cond_override_default) -> Union[np.ndarray, Tuple]:
+
+    N = settings['N']
+    T0_max = settings['T0_max']
+    # mask_crit_fac = settings['mask_crit_fac']
+
+    interp_strong_low = interpolators['interp_strong_low']
+    interp_strong_mid_1 = interpolators['interp_strong_mid_1']
+    interp_strong_mid_2 = interpolators['interp_strong_mid_2']
+    interp_strong_high = interpolators['interp_strong_high']
+    interp_strong_sad_max = interpolators['interp_strong_sad_max']
+    interp_weak_low = interpolators['interp_weak_low']
+    interp_weak_mid_1 = interpolators['interp_weak_mid_1']
+    interp_weak_mid_2 = interpolators['interp_weak_mid_2']
+    interp_weak_high = interpolators['interp_weak_high']
+    interp_T_vir = interpolators['interp_T_vir']
+    interp_weak_full_min_mu = interpolators['interp_weak_full_min_mu']
+    interp_strong_full_sad_T_adj = interpolators['interp_strong_full_sad_T_adj']
+    interp_strong_full_max_T_adj = interpolators['interp_strong_full_max_T_adj']
+    interp_strong_full_sad_mu = interpolators['interp_strong_full_sad_mu']
+    interp_strong_full_max_mu = interpolators['interp_strong_full_max_mu']
+    interp_strong_full_min_mu = interpolators['interp_strong_full_min_mu']
+
+    # lens_param_to_y_crit = interpolators['lens_param_to_y_crit']
+
+    # if mask_crit:
+    #     y_crit = lens_param_to_y_crit(kappa_interp)
+    #     masked = np.abs(y_interp - y_crit) < mask_crit_fac*y_crit
+    #     if masked:
+    #         return w_interp*(np.inf + 1.j*np.inf)
+
+    T_sad = interp_strong_full_sad_T_adj(y_interp, lp_interp)
+    strongly_lensed = ~np.isnan(T_sad)
+    strongly_lensed = strong_lens_cond_override(strongly_lensed, y_interp, lp_interp)
+
+    if strongly_lensed:
+        u_interp_low = interp_strong_low(y_interp, lp_interp).ravel()
+        u_interp_mid_1 = interp_strong_mid_1(y_interp, lp_interp).ravel()
+        u_interp_mid_2 = interp_strong_mid_2(y_interp, lp_interp).ravel()
+        u_interp_high = interp_strong_high(y_interp, lp_interp).ravel()
+        u_interp_sad_max = interp_strong_sad_max(y_interp, lp_interp).ravel()
+        T_sad_interp = interp_strong_full_sad_T_adj(y_interp, lp_interp)
+        T_max_interp = interp_strong_full_max_T_adj(y_interp, lp_interp)
+        mu_sad_interp = interp_strong_full_sad_mu(y_interp, lp_interp)
+        mu_max_interp = interp_strong_full_max_mu(y_interp, lp_interp)
+        mu_min_interp = interp_strong_full_min_mu(y_interp, lp_interp)
+    else:
+        u_interp_low = interp_weak_low(y_interp, lp_interp).ravel()
+        u_interp_mid_1 = interp_weak_mid_1(y_interp, lp_interp).ravel()
+        u_interp_mid_2 = interp_weak_mid_2(y_interp, lp_interp).ravel()
+        u_interp_high = interp_weak_high(y_interp, lp_interp).ravel()
+        u_interp_sad_max = None
+        T_sad_interp = interp_T_vir(y_interp, lp_interp)
+        T_max_interp = np.nan
+        mu_sad_interp = np.nan
+        mu_max_interp = np.nan
+        mu_min_interp = interp_weak_full_min_mu(y_interp, lp_interp)
+
+    T0_min_out_interp_seg, T0_sad_max_interp = make_T0_arr_multiple_chev_np(
+        N,
+        np.array([T_sad_interp, T_max_interp, 0]),
+        T0_max = T0_max)
+    T0_min_out_interp_full = np.concatenate(T0_min_out_interp_seg)
+    u_min_out_interp_full = np.concatenate([u_interp_low, u_interp_mid_1, u_interp_mid_2, u_interp_high])
+
+    T_im_hi = np.nanmax((T_max_interp, T_sad_interp))
+    if np.isnan(T_im_hi):
+        warnings.warn('T_im_hi is nan: y = {}, kappa = {}'.format(y_interp, lp_interp), RuntimeWarning)
+
+    w_sampling_freq = sampling_frequency*M_Lz*Mtow
+    w_interp = np.linspace(0, w_sampling_freq/2, num_f//2 + 1)
+    d_tau = 1/w_sampling_freq
+    t_fft_max = np.max((num_f*d_tau, T_im_hi*20))
+    num_f_expanded = int(t_fft_max/d_tau)
+    t_fft = np.linspace(0, t_fft_max, num_f_expanded)
+
+    if strongly_lensed:
+        F_fft = interp_F_fft_strong(t_fft, 
+                                          T0_min_out_interp_full,
+                                          u_min_out_interp_full, 
+                                          T0_sad_max_interp, 
+                                          u_interp_sad_max)
+    else:
+        F_fft = interp_F_fft_weak(t_fft,
+                                        T0_min_out_interp_full,
+                                        u_min_out_interp_full)
+
+    w_arr, Fw = amplification_fft_np(t_fft, F_fft)
+
+    if strongly_lensed:
+        mu_im = [mu_sad_interp, mu_max_interp, mu_min_interp]
+        T_im = [T_sad_interp, T_max_interp, 0]
+    else:
+        mu_im = [0, 0, mu_min_interp]
+        T_im = [0, 0, 0]
+
+    w_trans = 250/T_im_hi if strongly_lensed else 50/T_im_hi
+
+    w_list = [w_arr]
+    F_list = [Fw]
+    w_low_trans = w_arr[0]
+    partitions = np.array([w_low_trans, w_trans])
+    sigs = np.maximum(partitions/10, 1e-4)
+
+    if return_geom:
+
+        F_interp, F_geometric = interp_partitions(w_interp, w_list, F_list, partitions, sigs, T_im, mu_im, 
+                                 return_geom = return_geom)
+        return F_interp, F_geometric, partitions, T_im_hi, T_im, mu_im, u_interp_low, u_interp_mid_1, u_interp_mid_2, u_interp_high, u_interp_sad_max, w_arr, Fw
+    
+    else:
+            
+        F_interp = interp_partitions(w_interp, w_list, F_list, partitions, sigs, T_im, mu_im, 
+                                        return_geom = return_geom)
+        return F_interp
