@@ -11,7 +11,7 @@ Example parameter estimation scripts using `bilby` can be found in the `bilby_sc
 The scripts can be run with a configuration file.
 
 ```
-PE_full.py /path/to/config_file.json
+python PE_full.py /path/to/config_file.json
 ```
 
 Example configuration files can be found in the `config/` directory.
@@ -25,8 +25,8 @@ The dictionaries required in the `json` configuration file are as follows:
     | `MLz` | `float` | Injected redshifted lens mass | 
     | `lp` | `float` | Injected lens parameter of the lens |
 
-- `waveform_arguments`: the keyword arguments to be passed to the waveform generator in `bilby`
-- `sampler_settings`: the keyword arguments to be passed to the `bilby` sampler object.
+- `waveform_arguments`: the keyword arguments to be passed to the `bilby.gw.waveform_generator.WaveformGenerator` object in `bilby`.
+- `sampler_settings`: the keyword arguments to be passed to the `bilby.run_sampler` function.
 - `interpolator_settings`: the settings of the interpolator used, see the tutorial for loading the interpolation tables for more details.
 - `prior_settings`: the settings for the priors of the lensing related parameters and `luminosity_distance`. For example, the prior type (`uniform`, `loguniform`) and limits of `MLz` can be specified by `MLz_prior_type`, `MLz_min` and `MLz_max`. For `luminosity_distance`, the prior can be chosen to be `uniformsourceframe`. Additional arguements for masking the region near the caustic are as follows:
 
