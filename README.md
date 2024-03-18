@@ -7,9 +7,10 @@
 <p align="center">
     <a href = "https://arxiv.org/abs/0000.00000"><img src="https://img.shields.io/badge/arXiv-0000.00000-b31b1b.svg"></a>
     <a href="https://badge.fury.io/py/glworia"><img src="https://badge.fury.io/py/glworia.svg"></a>
-    <a href="https://github.com/mhycheung/glworia/actions/workflows/test-pypi-upload.yml "><img src="https://github.com/mhycheung/glworia/actions/workflows/test-pypi-upload.yml/badge.svg"></a>
+    <a href="https://github.com/mhycheung/glworia/actions/workflows/pytest.yml "><img src="https://github.com/mhycheung/glworia/actions/workflows/pytest.yml/badge.svg"></a>
     <a href="https://github.com/mhycheung/glworia/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
     <a href="https://pypi.org/project/glworia/"><img src="https://img.shields.io/pypi/pyversions/glworia"></a>
+    <a href="https://mhycheung.github.io/glworia/"><img src="https://badgen.net/badge/Read/the doc/blue" alt="doc"/></a>
 </p>
 
 ## Key Features
