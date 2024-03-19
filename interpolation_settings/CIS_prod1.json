@@ -1,0 +1,30 @@
+{
+    "lens_param_name": "xc",
+    "y_low": 0.1,
+    "y_high": 5.0,
+    "lp_low": 0.0,
+    "lp_high": 1.0,
+    "N_grid": 101,
+    "N_grid_strong": 201,
+    "N_crit": 201,
+    "N": 200,
+    "lens_model_name": "CIS",
+
+    "crit_lp_N": 100000,
+    "crit_bisect_x_low": -10,
+    "crit_bisect_x_high": 10,
+    "crit_bisect_x_num": 100,
+    "crit_screen_round_decimal": 8,
+
+    "T0_max": 1000,
+
+    "y_low_im": 0.1,
+    "y_high_im": 5.0,
+    "lp_low_im": 0.0,
+    "lp_high_im": 1.0,
+    "N_grid_im": 401,
+    "N_crit_im": 401,
+
+    "newt_max_iter_im": 1000,
+    "crit_lp_N_im": 10001
+}
