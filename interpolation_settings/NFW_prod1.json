@@ -1,0 +1,30 @@
+{
+    "lens_param_name": "kappa",
+    "y_low": 0.1,
+    "y_high": 5.0,
+    "lp_low": 0.1,
+    "lp_high": 10.0,
+    "N_grid": 101,
+    "N_grid_strong": 201,
+    "N_crit": 201,
+    "N": 200,
+    "lens_model_name": "NFW",
+
+    "crit_lp_N": 100000,
+    "im_x_init_low": -10,
+    "im_x_init_high": 10,
+    "im_x_init_num": 100,
+    "im_screen_round_decimal": 8,
+
+    "T0_max": 1000,
+
+    "y_low_im": 0.1,
+    "y_high_im": 5.0,
+    "lp_low_im": 0.1,
+    "lp_high_im": 10.0,
+    "N_grid_im": 401,
+    "N_crit_im": 401,
+
+    "newt_max_iter_im": 1000,
+    "crit_lp_N_im": 10001
+}

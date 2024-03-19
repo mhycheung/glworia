@@ -1,0 +1,87 @@
+{
+    "injection_parameters": {
+        "mass_1": 30.0,
+        "mass_2": 30.0,
+        "a_1": 0.0,
+        "a_2": 0.0,
+        "tilt_1": 0.0,
+        "tilt_2": 0.0,
+        "phi_12": 0.0,
+        "phi_jl": 0.0,
+        "theta_jn": 1.0471975511965976,
+        "psi": 1.5707963267948966,
+        "phase": 1.5707963267948966,
+        "geocent_time": 1126259642.413,
+        "ra": 1.375,
+        "dec": -1.2108,
+        "luminosity_distance": 500.0,
+        "y": 1.0,
+        "MLz": 100,
+        "lp": 3.0
+    },
+    "interpolator_settings": {
+        "y_low": 0.1,
+        "y_high": 5.0,
+        "lp_low": 0.1,
+        "lp_high": 10.0,
+        "N_grid": 101,
+        "N_grid_strong": 201,
+        "N_crit": 201,
+        "N": 200,
+        "lens_model_name": "NFW",
+        "lens_param_name": "kappa",
+        "T0_max": 1000,
+        "y_low_im": 0.1,
+        "y_high_im": 5.0,
+        "lp_low_im": 0.1,
+        "lp_high_im": 10.0,
+        "N_grid_im": 401,
+        "N_crit_im": 401,
+        "crit_param_low": 0.1,
+        "crit_param_high": 10.0
+    },
+    "prior_settings": {
+        "MLz_prior_type": "uniform",
+        "MLz_min": 0.1,
+        "MLz_max": 2000.0,
+        "y_min": 0.1,
+        "y_max": 5.0,
+        "lp_min": 0.1,
+        "lp_max": 10.0,
+        "luminosity_distance_prior_type": "uniformsourceframe",
+        "luminosity_distance_min": 1.0,
+        "luminosity_distance_max": 5000.0,
+        "reparameterize": false,
+        "y_to_alpha_MLz_prior_type": "uniform",
+        "y_to_alpha_MLz_min": 0.0,
+        "alpha": 1.5,
+        "crit_mask_settings": {
+            "fac": 0.5,
+            "cap_high": 0.2,
+            "cap_low": 0.2
+        },
+        "mask_boxes": []
+    },
+    "waveform_arguments": {
+        "waveform_approximant": "IMRPhenomXHM",
+        "reference_frequency": 50.0,
+        "minimum_frequency": 20.0
+    },
+    "misc": {
+        "zero_noise": false,
+        "duration": 4.0,
+        "sampling_frequency": 2048.0,
+        "minimum_frequency": 20,
+        "seed": 1234,
+        "lp_name": "lp",
+        "lp_latex": "$\\kappa$",
+        "outdir_ext": "NFW_PE_weak_prod_9"
+    },
+    "sampler_settings": {
+        "sampler": "dynesty",
+        "sample": "acceptance-walk",
+        "nlive": 1000,
+        "naccept": 100,
+        "maxmcmc": 5000
+    }
+}
