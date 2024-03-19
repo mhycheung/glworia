@@ -6,6 +6,8 @@ To construct an interpolation table, use the `do_interpolation.py` python script
 python scripts/do_interpolation.py -f /path/to/config_file.json -s /path/to/output/directory -im
 ```
 
+Example configuration files can be found in the `interpolation_settings/` directory in the `git` repository.
+
 | Option| flag | Description |
 | ----------- | -----------  | ----------- |
 | `--input-file` | `-f` | Path to configuration file. |

@@ -7,11 +7,11 @@ Therefore, when sampling over the $y$-$l$ plane for parameter estimation, we wil
 We define such a region as the region between $y_c(l) \pm \delta$, where $y_c(l)$ is the caustic curve in the $y$-$l$ plane, and $\delta$ is a constant. 
 For lens models that will reduce to the SIS lens at certain limits (e.g. $x_c \to 0$ for the CIS lens, or $k \to 1$ for gSIS), we also exclude the region close to the $y = 1$ caustic at those limits by setting the prior probability within a small rectangle to be zero.
 
-Example parameter estimation scripts using `bilby` can be found in the `bilby_scripts/` directory in the Git repo.
+An example parameter estimation script, `scripts/PE_full.py`, can be found in the `git` repository.
 The scripts can be run with a configuration file.
 
 ```
-python PE_full.py /path/to/config_file.json
+python scripts/PE_full.py /path/to/config_file.json
 ```
 
 Example configuration files can be found in the `config/` directory.
