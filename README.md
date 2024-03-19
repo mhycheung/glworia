@@ -35,6 +35,7 @@ Checkout the 'Tutorial' section on the documentation website.
 ## Parameter estimation results
 
 The full corner plots for the parameter estimation runs shown in the companion paper can be found in the `plots/` directory.
+The setting files for these runs are in the `PE_submission_settings/` directory.
 
 ## How to Cite
 Please cite the methods paper if you used our package to produce results in your publication.
