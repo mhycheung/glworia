@@ -586,9 +586,9 @@
 Therefore, when sampling over the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane for parameter estimation, we will ignore the region close to the caustic by assigning it a zero prior probability as implemented in the <code>glworia.pe.prior</code> module.
 We define such a region as the region between <span class="arithmatex">\(y_c(l) \pm \delta\)</span>, where <span class="arithmatex">\(y_c(l)\)</span> is the caustic curve in the <span class="arithmatex">\(y\)</span>-<span class="arithmatex">\(l\)</span> plane, and <span class="arithmatex">\(\delta\)</span> is a constant. 
 For lens models that will reduce to the SIS lens at certain limits (e.g. <span class="arithmatex">\(x_c \to 0\)</span> for the CIS lens, or <span class="arithmatex">\(k \to 1\)</span> for gSIS), we also exclude the region close to the <span class="arithmatex">\(y = 1\)</span> caustic at those limits by setting the prior probability within a small rectangle to be zero.</p>
-<p>Example parameter estimation scripts using <code>bilby</code> can be found in the <code>bilby_scripts/</code> directory in the Git repo.
+<p>An example parameter estimation script, <code>scripts/PE_full.py</code>, can be found in the <code>git</code> repository.
 The scripts can be run with a configuration file.</p>
-<pre><code>python PE_full.py /path/to/config_file.json
+<pre><code>python scripts/PE_full.py /path/to/config_file.json
 </code></pre>
 <p>Example configuration files can be found in the <code>config/</code> directory.
 The dictionaries required in the <code>json</code> configuration file are as follows:</p>
